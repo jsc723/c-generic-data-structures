@@ -80,7 +80,7 @@ size_t size; //number of items
 int (*compare)(const T *t1, const T *t2); 
 
 /*
-  check if two items are equal, there is a default value that compares two items byte by byte.
+  check if two items are equal, there is a default equals function that compares two items byte by byte.
   If you are storing pointers, you probably need to change this.
 */
 int (*equals)(const T *t1, const T *t2);  

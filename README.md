@@ -10,7 +10,7 @@ But when you want to call a method, you should use the ```m()``` macro.
 For example, ```m(pInst)->pushBack(10)``` 
 append 10 at the end of the arraylist (assume pInst points to an arraylist instance).
 ## ArrayList
-include header file: CArrayList.h
+header file: ```CArrayList.h```
 #### APIs
 ```c
 Declare_CArrayList(T) //declare an ArrayList with type T (denoted as ArrayList<T>)
@@ -21,43 +21,47 @@ ArrayList(T) //Define a pointer to an ArrayList<T> instance
   
 NewArrayList(T) //constructor
 
-/*append the item at the end of the array,
-it returns the pointer to its virtual function table so that you can use it to call another method.
-This is just for convenience. If you don't know what it is, just ignore it.*/
-pVFTB(ArrayList<T>) ArrayList<T>::pushBack(T item); 
+```
+```c
+/*
+  append the item at the end of the array,
+  it returns the pointer to its virtual function table, the same thing returnd by m(), so that you can use it to call another method.
+  This is just for convenience. If you don't know what it is, just treat pVFTB(ArrayList<T>) as void.
+*/
+pVFTB(ArrayList<T>) pushBack(T item); 
   
 //append all n items at the end of the array
-pVFTB(ArrayList<T>) ArrayList<T>::pushAll(T *items, int n); 
+pVFTB(ArrayList<T>) pushAll(T *items, int n); 
   
 //append all items in the otherList to the end of the array
-pVFTB(ArrayList<T>) ArrayList<T>::expend(ArrayList<T> * otherList); 
+pVFTB(ArrayList<T>) expend(ArrayList<T> * otherList); 
 
 //insert the item at the index
-pVFTB(ArrayList<T>) ArrayList<T>::insert(T item, int index); 
+pVFTB(ArrayList<T>) insert(T item, int index); 
   
 //pop the last item
-T ArrayList<T>::popBack();
+T popBack();
 
 //pop the item at index
-T ArrayList<T>::popAt(int index);
+T popAt(int index);
 
 //find the index of item, if the item does not exist, returns -1.
-int ArrayList<T>::indexOf(T item); 
+int indexOf(T item); 
 
 //create a sublist of the list with the indecies [start, end). 
-ArrayList<T> *ArrayList<T>::subList(int start, int end); 
+ArrayList<T> *subList(int start, int end); 
 
 //sort the list using merge sort, must set the comparater first (see the next session)
-pVFTB(ArrayList<T>) ArrayList<T>::sort();
+pVFTB(ArrayList<T>) sort();
 
 // apply map_func to every items in the array
-pVFTB(ArrayList<T>) ArrayList<T>::map(void (*map_func)(T *t));
+pVFTB(ArrayList<T>) map(void (*map_func)(T *t));
 
 // returns reduce_func(acc, reduce_func(&item0, reduce_func(&item1, ...)))
-pVFTB(ArrayList<T>) ArrayList<T>::reduce(void (*reduce_func)(T *t1, T *t2), T *acc);
+pVFTB(ArrayList<T>) reduce(void (*reduce_func)(T *t1, T *t2), T *acc);
 
 // free the arraylist
-void ArrayList<T>::free();
+void free();
   
 ```
 
@@ -92,10 +96,11 @@ typedef struct student {
   char *name;
   int age;
 }student, *pStudent;
-Declare_CArrayList(student)
-
+Declare_CArrayList(pStudent)
+```
+```c
 /*In a source file*/
-Define_CArrayList(student)
+Define_CArrayList(pStudent)
 
 int comparePStudent(const pStudent *t1, const pStudent *t2) {
   pStudent p1 = *t1, p2 = * t2;

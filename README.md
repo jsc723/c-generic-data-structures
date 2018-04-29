@@ -3,11 +3,12 @@ some common data structures implemented in **C** (more specifically, C99), suppo
 And the APIs are provided as a objective orienting style.
 I'm still working on it. But the ArrayList and HashMap should be usable.
 ## About the OOP framework
-Since all of these structures uses my OOP framework written in ```jscobj2.h```, the APIs are OOP like.
-Let ```pInst``` be a pointer to an instance of data structure defined in this repo (e.g. an ArrayList), 
-you can access its members normally using ```->```, (e.g. ```pInst->size```).
+Since all of these structures use my OOP framework written in ```jscobj2.h```, the APIs are also OOP like.
+Let ```pInst``` be a pointer to an instance of data structure defined in this repo (e.g. an ArrayList) , 
+You can access its members normally using ```->```, (e.g. ```pInst->size```).
 But when you want to call a method, you should use the ```m()``` macro. 
-For example, ```m(pInst)->pushBack(10)``` append 10 at the end of the arraylist (assume pInst points to an arraylist instance).
+For example, ```m(pInst)->pushBack(10)``` 
+append 10 at the end of the arraylist (assume pInst points to an arraylist instance).
 ## ArrayList
 include header file: CArrayList.h
 #### APIs

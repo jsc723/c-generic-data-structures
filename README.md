@@ -5,7 +5,7 @@ I'm still working on it. But the ArrayList and HashMap should be usable.
 ## About the OOP framework
 Since all of these structures use my OOP framework written in ```jscobj2.h```, the APIs are also OOP like.
 Let ```pInst``` be a pointer to an instance of data structure defined in this repo (e.g. an ArrayList) , 
-You can access its members normally using ```->```, (e.g. ```pInst->size```).
+You can access its members as usual using ```->```, (e.g. ```pInst->size```).
 But when you want to call a method, you should use the ```m()``` macro. 
 For example, ```m(pInst)->pushBack(10)``` 
 append 10 at the end of the arraylist (assume pInst points to an arraylist instance).
@@ -25,7 +25,8 @@ NewArrayList(T) //constructor
 ```c
 /*
   append the item at the end of the array,
-  it returns the pointer to its virtual function table, the same thing returnd by m(), so that you can use it to call another method.
+  it returns the pointer to its virtual function table, the same thing returnd by m(), so that you can use it 
+  to call another method.
   This is just for convenience. If you don't know what it is, just treat pVFTB(ArrayList<T>) as void.
 */
 pVFTB(ArrayList<T>) pushBack(T item); 

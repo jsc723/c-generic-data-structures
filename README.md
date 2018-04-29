@@ -58,7 +58,11 @@ pVFTB(ArrayList<T>) sort();
 // apply map_func to every items in the array
 pVFTB(ArrayList<T>) map(void (*map_func)(T *t));
 
-// returns reduce_func(acc, reduce_func(&item0, reduce_func(&item1, ...)))
+/*
+  same as 
+  for each item in arraylist:
+    reduce_func(acc, &item);
+*/
 pVFTB(ArrayList<T>) reduce(void (*reduce_func)(T *t1, T *t2), T *acc);
 
 // free the arraylist

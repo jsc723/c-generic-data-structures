@@ -12,19 +12,19 @@ append 10 at the end of the arraylist (assume pInst points to an arraylist insta
 ## ArrayList
 header file: ```CArrayList.h```
 #### APIs
-Declare and Define
+##### Declare and Define
 ```c
 Declare_CArrayList(T) //declare class ArrayList<T> (an ArrayList whose items have type T)
 
 Define_CArrayList(T) //define class ArrayList<T>
 ```
-Type Name and Constructor
+##### Type Name and Constructor
 ```c
 ArrayList(T) //type name of a pointer to an ArrayList<T> instance
   
 NewArrayList(T) //name of the constructor of ArrayList<T>
 ```
-Methods
+##### Methods
 ```c
 /*
   append the item at the end of the array,
@@ -73,7 +73,7 @@ void free();
   
 ```
 
-Public Members
+##### Public Members
 ```c
 T *arr; //the array of the items
 
@@ -150,13 +150,13 @@ int main() {
 ## HashMap
 header file: ```CHashMap.h```
 #### APIs
-Declare and Define
+##### Declare and Define
 ```c
 Declare_CHashMap(K, V) // Declare class HashMap<K, V> (an HashMap whose keys have type K and values has type V)
 
 Define_CHashMap(K, V) // Define class HashMap<K, V>
 ```
-Type Names and Constructor
+##### Type Names and Constructor
 ```c
 
 HashMap(K, V) //type name of an pointer to an HashMap<K, V> instance
@@ -197,7 +197,7 @@ HashMapEntry(K, V) (*enumerate)();
 //free the hashmap instance
 void(*free)();
 ```
-Public Members
+##### Public Members
 ```c
 size_t size; // number of items
 

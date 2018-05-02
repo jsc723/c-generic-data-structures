@@ -13,13 +13,13 @@ append 10 at the end of the arraylist (assume pInst points to an arraylist insta
 header file: ```CArrayList.h```
 #### APIs
 ```c
-Declare_CArrayList(T) //declare an ArrayList with type T (denoted as ArrayList<T>)
+Declare_CArrayList(T) //declare class ArrayList<T> (an ArrayList whose items have type T)
 
-Define_CArrayList(T) //define an ArrayList with type T
+Define_CArrayList(T) //define class ArrayList<T>
 
-ArrayList(T) //Define a pointer to an ArrayList<T> instance
+ArrayList(T) //type name of a pointer to an ArrayList<T> instance
   
-NewArrayList(T) //constructor
+NewArrayList(T) //name of the constructor of ArrayList<T>
 
 ```
 ```c
@@ -145,6 +145,66 @@ int main() {
   
 ```
 ## HashMap
-coming soon
+header file: ```CHashMap.h```
+#### APIs
+```c
+Declare_CHashMap(K, V) // Declare class HashMap<K, V> (an HashMap whose keys have type K and values has type V)
+
+Define_CHashMap(K, V) // Define class HashMap<K, V>
+
+HashMap(K, V) //type name of an pointer to an HashMap<K, V> instance
+
+NewHashMap(K, V) //name of the constructor of HashMap<K, V>
+
+HashMapEntry(K, V) //type name of an pointer to an HashMapEntry<K, V> instance
+```
+```c
+//put a key-value pair (k, v) into the hashmap.
+void put(K k, V v);
+
+//get the corresponding value of a given key. If the key does not exist, it simply aborts.
+V    get(K k);
+
+//check if the hashmap contains the given key. returns 1(true) or 0(false)
+int  containsKey(K k);
+
+//remove the key-value pair of the key k. If key does not exist, it does nothing.
+void  remove(K k);
+
+//remove all key-value pair in the hashmap.
+void  clear();
+
+//make a shallow copy of the hashmap
+HashMap(K, V) (*clone)();
+
+/* return the head of the circular double linked list
+**** do not modify anything (except the values in the key-value pair)
+otherwise the hash map can't work appropriately ****
+	the first item is at head->next
+	the last item is at head->prev
+	when there is 0 item, head->next = head->prev = head;
+*/
+HashMapEntry(K, V) (*enumerate)();
+
+//free the hashmap instance
+void(*free)();
+```
+#### Public Members
+```c
+size_t size; // number of items
+
+HashMapEntry(K, V) head; //head of circular double linked list of items
+
+unsigned int (*h)(K k); //hash function of key
+
+int (*equals)(const K *k1, const K *k2); //equals() function for keys
+
+void (*freeKey)(K key); //free() function for keys
+
+void (*freeValue)(V value); /free() function for values
+```
+#### Examples
+```c
+```
 ## PriorityQueue
 coming soon

@@ -165,7 +165,7 @@ NewHashMap(K, V) //name of the constructor of HashMap<K, V>
 
 HashMapEntry(K, V) //type name of an pointer to an HashMapEntry<K, V> instance
 ```
-Methods
+##### Methods
 ```c
 //put a key-value pair (k, v) into the hashmap.
 void put(K k, V v);

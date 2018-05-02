@@ -183,7 +183,7 @@ void  remove(K k);
 void  clear();
 
 //make a shallow copy of the hashmap
-HashMap(K, V) (*clone)();
+HashMap(K, V) clone();
 
 /* return the head of the circular double linked list
 **** do not modify anything (except the values in the key-value pair)
@@ -195,7 +195,7 @@ otherwise the hash map can't work appropriately ****
 HashMapEntry(K, V) (*enumerate)();
 
 //free the hashmap instance
-void(*free)();
+void free();
 ```
 ##### Public Members
 ```c

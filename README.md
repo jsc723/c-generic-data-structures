@@ -214,6 +214,7 @@ void (*freeValue)(V value); /free() function for values
 #### Examples
 ```c
 /*In a header file*/
+
 typedef char *string;
 
 Declare_CHashMap(string, int)

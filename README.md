@@ -213,6 +213,48 @@ void (*freeValue)(V value); /free() function for values
 ```
 #### Examples
 ```c
+/*In a header file*/
+typedef char *string;
+
+Declare_CHashMap(string, int)
+```
+```c
+/*In a source file*/
+
+Define_CHashMap(string, int)
+
+string String(const char *s) {
+	int sz = strlen(s);
+	string str = (string)malloc(sz + 1);
+	strcpy(str, s);
+	return str;
+}
+
+int str_eq(const string *p1, const string *p2) {
+	return strcmp(*p1, *p2) == 0;
+}
+
+int main() {
+	HashMap(string, int) hashmap = NewHashMap(string, int)(hashString);
+	hashmap->equals = str_eq;
+	hashmap->freeKey = free;
+	m(hashmap)->put(String("abc"), 10);
+	m(hashmap)->put(String("qfdv"), 12);
+	m(hashmap)->put(String("hello"), -22);
+	m(hashmap)->put(String("hashmap"), 0);
+	printf("%d\n", m(hashmap)->get("hello"));
+	HashMapEntry(string, int) head = m(hashmap)->enumerate(), p = head->next;
+	while (p != head) {
+		printf("%s %d\n", p->key, p->value);
+		p = p->next;
+	}
+	p = head->prev;
+	while (p != head) {
+		printf("%s %d\n", p->key, p->value);
+		p = p->prev;
+	}
+	return 0;
+}
 ```
 ## PriorityQueue
 coming soon

@@ -58,21 +58,33 @@ __DefCPQ_remove(double)
 __DefCPQ_size(double)
 __DefNewCPQ(double)
 
+Declare_CPriorityQueue(word)
+Define_CPriorityQueue(word)
+
+string String(const char *s) {
+	int sz = strlen(s);
+	string str = (string)malloc(sz + 1);
+	str_cpy(str, s);
+	return str;
+}
+
+int cmpword(const word *w1, const word *w2) {
+	return w1->count - w2->count;
+}
 
 int main() {
-	PriorityQueue(double) pq = NewPriorityQueue(double)(DFT_CMPN(double));
-	m(pq)->add(2.0);
-	m(pq)->add(9.0);
-	m(pq)->add(4.0);
-	m(pq)->add(5.0);
-	m(pq)->add(1.0);
-	m(pq)->add(12.0);
-	m(pq)->add(19.0);
-	m(pq)->add(4.0);
-	m(pq)->add(15.0);
-	m(pq)->add(1.0);
-	while (m(pq)->size() > 0) {
-		printf("%lf\n", m(pq)->poll().value);
+	PriorityQueue(word) pq = NewPriorityQueue(word)(cmpword);
+	word w1 = { "hello", 5 };
+	word w2 = { "I", 10 };
+	word w3 = { "the", 8 };
+	word w4 = { "yukarin", 1 };
+	m(pq)->add(w1);
+	m(pq)->add(w2);
+	m(pq)->add(w3);
+	m(pq)->add(w4);
+	Optional(word) t;
+	while ((t = m(pq)->poll()).valid) {
+		printf("%s %d\n", t.value.v, t.value.count);
 	}
 	system("pause");
 	return 0;

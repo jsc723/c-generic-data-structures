@@ -53,8 +53,7 @@ With_Methods(CPriorityQueue##E)\
 	Optional(E) (*poll)();\
 	int (*remove)(E e);\
 	size_t (*size)();\
-End_Class(CPriorityQueue##E)\
-pCPriorityQueue##E NewCPQ_T(Compare##E cmp);
+End_Class(CPriorityQueue##E)
 
 #define __Dec_CPQ_Helper(E)\
 int __CPQ__parent##E(int i);\
@@ -84,7 +83,7 @@ void __CPQ__up##E(int i) {\
 	E *arr = self->heap->arr;\
 	int p = __CPQ__parent##E(i);\
 	if (i == 0) return;\
-	if (cmp(&(arr[p]), &(arr[i])) > 0) {\
+	if (cmp(&(arr[p]), &(arr[i])) < 0) {\
 		__CPQ__swap##E(arr, p, i);\
 		m(self); __CPQ__up##E(p);\
 	}\
@@ -99,15 +98,15 @@ void __CPQ__down##E(int i) {\
 	int right = __CPQ__rightChild##E(i);\
 	if (left >= self->heap->size) return;\
 	if (right >= self->heap->size) {\
-		if (cmp(&(arr[left]), &(arr[i])) < 0) {\
+		if (cmp(&(arr[left]), &(arr[i])) > 0) {\
 			__CPQ__swap##E(arr, left, i);\
 		}\
 	}\
 	else {\
-		int min = cmp(arr + left, arr + right) <= 0 ? left : right;\
-		if (cmp(arr + min, arr + i) < 0) {\
-			__CPQ__swap##E(arr, min, i);\
-			m(self); __CPQ__down##E(min);\
+		int max = cmp(arr + left, arr + right) >= 0 ? left : right;\
+		if (cmp(arr + max, arr + i) > 0) {\
+			__CPQ__swap##E(arr, max, i);\
+			m(self); __CPQ__down##E(max);\
 		}\
 	}\
 }

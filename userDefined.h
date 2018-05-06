@@ -13,7 +13,8 @@ typedef struct word {
 	size_t count;
 }word, *pWord;
 
-string String(const char *s);
+
+
 
 word Word(const char *s, size_t count);
 void str_cpy(char *dst, const char *src);
@@ -21,6 +22,7 @@ string emptyStr(size_t sz);
 int strCMP(string *s1, string *s2);
 void strUpper(string *p);
 void strConCat(string *acc, string *ps);
+
 
 
 

@@ -67,7 +67,7 @@ is included in the macro Define_Class().
 	... method_1(...){ 
 		Method_Of(class_name) //you cannot use 'self' without this line
 		...
-		self;	//self refers to the address of the object calling this method.
+		self;	//self refers to the pointer of the object calling this method.
 		self->attribute1;	 //refering to its attribute
 		m(self)->method_2(); //calling its method
 		this->method_2();	//same as the previous line, in other words, 
@@ -175,7 +175,8 @@ __DecDefaultCmpN(double)
 
 #define _Define_Optional(T)\
 typedef struct _Optional_##T {\
-	int valid; T value;\
+	unsigned char valid;\
+	T value;\
 }_Optional_##T;
 
 #define Optional(T) _Optional_##T

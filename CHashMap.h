@@ -285,7 +285,7 @@ pCHashMap##K##_##V __hashMapClone##K##_##V() {\
 
 *****  note that every thing is READ ONLY !!!  *****
 
-**** do not modify anything (except the values the the key-value pair)
+**** do not modify anything (except the values in the key-value pair)
 otherwise the hash map can't work appropriately ****
 
 	the first item is at head->next

@@ -13,12 +13,6 @@ void str_cpy(char *dst, const char *src) {
 	*p = '\0';
 }
 
-string String(const char *s) {
-	int sz = strlen(s);
-	string str = (string)malloc(sz + 1);
-	str_cpy(str, s);
-	return str;
-}
 string emptyStr(size_t sz) {
 	string s = (string)malloc(sz * sizeof(char));
 	s[0] = '\0';

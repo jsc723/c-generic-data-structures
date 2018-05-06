@@ -1,6 +1,6 @@
 # c-generic-data-structures
 some common data structures implemented in **C** (more specifically, C99), supporting generic types.
-And the APIs are provided as a objective orienting style.
+And the APIs are provided in a objective orienting style.
 I'm still working on it. But the ArrayList and HashMap should be usable.
 ## About the OOP framework
 Since all of these structures use my OOP framework written in ```jscobj2.h```, the APIs are also OOP like.
@@ -12,16 +12,19 @@ append 10 at the end of the arraylist (assume pInst points to an arraylist insta
 ## ArrayList
 header file: ```CArrayList.h```
 #### APIs
+##### Declare and Define
 ```c
-Declare_CArrayList(T) //declare an ArrayList with type T (denoted as ArrayList<T>)
+Declare_CArrayList(T) //declare class ArrayList<T> (an ArrayList whose items have type T)
 
-Define_CArrayList(T) //define an ArrayList with type T
-
-ArrayList(T) //Define a pointer to an ArrayList<T> instance
-  
-NewArrayList(T) //constructor
-
+Define_CArrayList(T) //define class ArrayList<T>
 ```
+##### Type Name and Constructor
+```c
+ArrayList(T) //type name of a pointer to an ArrayList<T> instance
+  
+NewArrayList(T) //name of the constructor of ArrayList<T>
+```
+##### Methods
 ```c
 /*
   append the item at the end of the array,
@@ -58,7 +61,11 @@ pVFTB(ArrayList<T>) sort();
 // apply map_func to every items in the array
 pVFTB(ArrayList<T>) map(void (*map_func)(T *t));
 
-// returns reduce_func(acc, reduce_func(&item0, reduce_func(&item1, ...)))
+/*
+  same as 
+  for each item in arraylist:
+    reduce_func(acc, &item);
+*/
 pVFTB(ArrayList<T>) reduce(void (*reduce_func)(T *t1, T *t2), T *acc);
 
 // free the arraylist
@@ -66,7 +73,7 @@ void free();
   
 ```
 
-#### Public Members
+##### Public Members
 ```c
 T *arr; //the array of the items
 
@@ -76,7 +83,7 @@ size_t size; //number of items
 int (*compare)(const T *t1, const T *t2); 
 
 /*
-  check if two items are equal, there is a default value that compares two items byte by byte.
+  check if two items are equal, there is a default equals function that compares two items byte by byte.
   If you are storing pointers, you probably need to change this.
 */
 int (*equals)(const T *t1, const T *t2);  
@@ -141,6 +148,114 @@ int main() {
   
 ```
 ## HashMap
-coming soon
+header file: ```CHashMap.h```
+#### APIs
+##### Declare and Define
+```c
+Declare_CHashMap(K, V) // Declare class HashMap<K, V> (an HashMap whose keys have type K and values has type V)
+
+Define_CHashMap(K, V) // Define class HashMap<K, V>
+```
+##### Type Names and Constructor
+```c
+
+HashMap(K, V) //type name of an pointer to an HashMap<K, V> instance
+
+NewHashMap(K, V) //name of the constructor of HashMap<K, V>
+
+HashMapEntry(K, V) //type name of an pointer to an HashMapEntry<K, V> instance
+```
+##### Methods
+```c
+//put a key-value pair (k, v) into the hashmap.
+void put(K k, V v);
+
+//get the corresponding value of a given key. If the key does not exist, it simply aborts.
+V    get(K k);
+
+//check if the hashmap contains the given key. returns 1(true) or 0(false)
+int  containsKey(K k);
+
+//remove the key-value pair of the key k. If key does not exist, it does nothing.
+void  remove(K k);
+
+//remove all key-value pair in the hashmap.
+void  clear();
+
+//make a shallow copy of the hashmap
+HashMap(K, V) clone();
+
+/* return the head of the circular double linked list
+**** do not modify anything (except the values in the key-value pair)
+otherwise the hash map can't work appropriately ****
+	the first item is at head->next
+	the last item is at head->prev
+	when there is 0 item, head->next = head->prev = head;
+*/
+HashMapEntry(K, V) (*enumerate)();
+
+//free the hashmap instance
+void free();
+```
+##### Public Members
+```c
+size_t size; // number of items
+
+HashMapEntry(K, V) head; //head of circular double linked list of items
+
+unsigned int (*h)(K k); //hash function of key
+
+int (*equals)(const K *k1, const K *k2); //equals() function for keys
+
+void (*freeKey)(K key); //free() function for keys
+
+void (*freeValue)(V value); /free() function for values
+```
+#### Examples
+```c
+/*In a header file*/
+
+typedef char *string;
+
+Declare_CHashMap(string, int)
+```
+```c
+/*In a source file*/
+
+Define_CHashMap(string, int)
+
+string String(const char *s) {
+	int sz = strlen(s);
+	string str = (string)malloc(sz + 1);
+	strcpy(str, s);
+	return str;
+}
+
+int str_eq(const string *p1, const string *p2) {
+	return strcmp(*p1, *p2) == 0;
+}
+
+int main() {
+	HashMap(string, int) hashmap = NewHashMap(string, int)(hashString);
+	hashmap->equals = str_eq;
+	hashmap->freeKey = free;
+	m(hashmap)->put(String("abc"), 10);
+	m(hashmap)->put(String("qfdv"), 12);
+	m(hashmap)->put(String("hello"), -22);
+	m(hashmap)->put(String("hashmap"), 0);
+	printf("%d\n", m(hashmap)->get("hello"));
+	HashMapEntry(string, int) head = m(hashmap)->enumerate(), p = head->next;
+	while (p != head) {
+		printf("%s %d\n", p->key, p->value);
+		p = p->next;
+	}
+	p = head->prev;
+	while (p != head) {
+		printf("%s %d\n", p->key, p->value);
+		p = p->prev;
+	}
+	return 0;
+}
+```
 ## PriorityQueue
 coming soon

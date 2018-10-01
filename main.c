@@ -31,32 +31,8 @@ int str_eq(const string *p1, const string *p2) {
 	return strcmp(*p1, *p2) == 0;
 }
 
-__Dec_CPQ(double)
-__DecSwapUpDown(double)
-__Dec_CPQ_Helper(double)
-__DecCPQ_add(double)
-__DecCPQ_clear(double)
-__DecCPQ_contains(double)
-__DecCPQ_peek(double)
-__DecCPQ_poll(double)
-__DecCPQ_remove(double)
-__DecCPQ_size(double)
-__DecNewCPQ(double)
-
-
-Define_CArrayList(double)
-__DefSwap(double)
-__DefUp(double)
-__DefDown(double)
-__Def_CPQ_Helper(double)
-__DefCPQ_add(double)
-__DefCPQ_clear(double)
-__DefCPQ_contains(double)
-__DefCPQ_peek(double)
-__DefCPQ_poll(double)
-__DefCPQ_remove(double)
-__DefCPQ_size(double)
-__DefNewCPQ(double)
+Declare_CPriorityQueue(double)
+Define_CPriorityQueue(double)
 
 Declare_CPriorityQueue(word)
 Define_CPriorityQueue(word)
@@ -76,7 +52,7 @@ int main() {
 	PriorityQueue(word) pq = NewPriorityQueue(word)(cmpword);
 	word w1 = { "hello", 5 };
 	word w2 = { "I", 10 };
-	word w3 = { "the", 8 };
+	word w3 = { "say", 8 };
 	word w4 = { "yukarin", 1 };
 	m(pq)->add(w1);
 	m(pq)->add(w2);
@@ -86,6 +62,7 @@ int main() {
 	while ((t = m(pq)->poll()).valid) {
 		printf("%s %d\n", t.value.v, t.value.count);
 	}
+	m(pq)->free();
 	system("pause");
 	return 0;
 }

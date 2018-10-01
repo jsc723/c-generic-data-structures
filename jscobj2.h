@@ -4,7 +4,7 @@
 	Version: 2.0
 	By Sicheng Jiang (UC Berkeley)
 	An framework for objective programming in C.
-	Note: this framework is not designed for a parallelized program
+	Note: this framework is NOT thread save.
 	2018/04/19
 
 -----------------------------Usage------------------------------------
@@ -18,7 +18,7 @@
 		function_pointer1;
 		function_pointer2;
 		...
-	End_Class(T)
+	End_Class(class_name)
 
 Note: If you want to put the pointer of class_name in its defination,
 you can use pclass_name for convenience. In other words, the statement

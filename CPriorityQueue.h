@@ -21,6 +21,7 @@ __DecCPQ_peek(E) \
 __DecCPQ_poll(E) \
 __DecCPQ_remove(E) \
 __DecCPQ_size(E) \
+__DecCPQ_free(E) \
 __DecNewCPQ(E)
 
 #define Define_CPriorityQueue(E)\
@@ -36,6 +37,7 @@ __DefCPQ_peek(E) \
 __DefCPQ_poll(E) \
 __DefCPQ_remove(E) \
 __DefCPQ_size(E) \
+__DefCPQ_free(E) \
 __DefNewCPQ(E)
 
 //------------------------------------------
@@ -53,6 +55,7 @@ With_Methods(CPriorityQueue##E)\
 	Optional(E) (*poll)();\
 	int (*remove)(E e);\
 	size_t (*size)();\
+	void(*free)();\
 End_Class(CPriorityQueue##E)
 
 #define __Dec_CPQ_Helper(E)\
@@ -140,7 +143,6 @@ int __CPQ_contains##E(E e) {\
 Optional(E) __CPQ_peek##E();
 #define __DefCPQ_peek(E) \
 Optional(E) __CPQ_peek##E() {\
-	\
 		getSelf(CPriorityQueue##E); \
 		Optional(E) result; \
 		if (self->heap->size == 0) { \
@@ -174,7 +176,7 @@ int __CPQ_remove##E(E e);
 int __CPQ_remove##E(E e) {\
 	getSelf(CPriorityQueue##E);\
 	int i, removed = 0;\
-	while ((i = m(self->heap)->indexOf(e)) >= 0) {\
+	if ((i = m(self->heap)->indexOf(e)) >= 0) {\
 		__CPQ__swap##E(self->heap->arr, i, self->heap->size - 1);\
 		m(self->heap)->popBack();\
 		m(self); __CPQ__down##E(i);\
@@ -189,6 +191,16 @@ size_t __CPQ_size##E() {\
 	getSelf(CPriorityQueue##E);\
 	return self->heap->size;\
 }
+
+#define __DecCPQ_free(E)\
+void __CPQ_free##E();
+#define __DefCPQ_free(E)\
+void __CPQ_free##E() {\
+	getSelf(CPriorityQueue##E);\
+	m(self->heap)->free();\
+	free(self);\
+}
+
 #define __DecNewCPQ(E) \
 pCPriorityQueue##E NewCPQ_##E(Compare##E cmp);
 #define __DefNewCPQ(E) \
@@ -199,7 +211,8 @@ __CPQ_contains##E,\
 __CPQ_peek##E,\
 __CPQ_poll##E,\
 __CPQ_remove##E,\
-__CPQ_size##E \
+__CPQ_size##E, \
+__CPQ_free##E \
 End_Install()\
 pCPriorityQueue##E NewCPQ_##E(Compare##E cmp) {\
 	Alloc_Instance(pq, CPriorityQueue##E);\

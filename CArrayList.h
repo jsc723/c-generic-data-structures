@@ -201,8 +201,10 @@ T __pop##T##At(int index)\
 {\
 	/****/getSelf(T##Array)/****/\
 	int i;\
-	if(self->size <= index)\
+	if(self->size <= index) {\
 		printf("index out of boundary!");\
+		exit(101);\
+	}\
 	T p = self->arr[index];\
 	for(i = index+1;i<self->size;i++)\
 		self->arr[i-1] = self->arr[i];\

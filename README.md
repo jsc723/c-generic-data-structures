@@ -161,7 +161,7 @@ Define_CHashMap(K, V) // Define class HashMap<K, V>
 
 HashMap(K, V) //type name of an pointer to an HashMap<K, V> instance
 
-NewHashMap(K, V) //name of the constructor of HashMap<K, V>
+HashMap(K, V) NewHashMap(K, V)(unsigned int(*hash_function)(K)); //prototype of the constructor of HashMap<K, V>
 
 HashMapEntry(K, V) //type name of an pointer to an HashMapEntry<K, V> instance
 ```
@@ -258,4 +258,97 @@ int main() {
 }
 ```
 ## PriorityQueue
-coming soon
+header file: ```CPriorityQueue.h```
+#### APIs
+##### Declare and Define
+```c
+Declare_CPriorityQueue(T) //declare class PriorityQueue<T> (an PriorityQueue whose items have type T)
+
+Define_CPriorityQueue(T) //define class PriorityQueue<T>
+```
+##### Type Name and Constructor
+```c
+PriorityQueue(T) //type name of a pointer to an PriorityQueue<T> instance
+  
+/* 
+   prototype of the constructor of ArrayList<T>
+   Note that the comparator should returns a positive number when t1 has a higher priority then t2. 
+   (And 0 when equal, negative when less) 
+*/
+PriorityQueue(T) NewPriorityQueue(T)(int (*comparator)(const T *t1, const T *t2)); 
+
+```
+##### Methods
+```c
+//add an item into the priority queue
+void add(T elem);
+
+//clear all items in the queue
+void clear();
+
+//returns 0 if the queue does not contain the elem. Otherwise returns a value that is not 0.
+int contains(T elem);
+
+/* Return an Optional(T) struct that contains the item with the highest priority in the queue without removing it from the queue. 
+   For example, 
+   Optional(T) t = m(pq)->peek();
+   t.valid; //a boolean value that indicates whether t.value field has a valid value.
+   t.value; //refers to the item with type T
+   When the queue is empty, t.valid is set to 0.
+   When the queue is not empty, t.valid is set to 1, and t.value contains the value of the item that has the highest priority.
+*/
+Optional(T) peek();
+
+/* Same as peek(), except this method will remove the item that has the higher priority from the queue. */
+Optional(T) poll();
+
+//remove one instance of elem from the queue. Return 1 if successfully removed one item, 0 if the item is not found.
+int remove(T elem);
+
+//return the number of elements in the queue.
+size_t size();
+
+```
+
+##### Public Members
+
+NONE
+
+#### Examples
+```c
+/*In a header file*/
+typedef char *string;
+typedef struct word {
+	string v;
+	size_t count;
+}word;
+Declare_CPriorityQueue(word)
+```
+```c
+/*In a source file*/
+Define_CPriorityQueue(word)
+
+int cmpword(const word *w1, const word *w2) {
+	return w1->count - w2->count;
+}
+
+int main() {
+	PriorityQueue(word) pq = NewPriorityQueue(word)(cmpword);
+	word w1 = { "hello", 5 };
+	word w2 = { "I", 10 };
+	word w3 = { "say", 8 };
+	word w4 = { "yukarin", 1 };
+	m(pq)->add(w1);
+	m(pq)->add(w2);
+	m(pq)->add(w3);
+	m(pq)->add(w4);
+	Optional(word) t;
+	while ((t = m(pq)->poll()).valid) {
+		printf("%s %d\n", t.value.v, t.value.count);
+	}
+	m(pq)->free();
+	system("pause");
+	return 0;
+}
+  
+```

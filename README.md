@@ -1,7 +1,7 @@
 # c-generic-data-structures
 some common data structures implemented in **C** (more specifically, C99), supporting generic types.
 And the APIs are provided in a objective orienting style.
-I'm still working on it. But the ArrayList and HashMap should be usable.
+
 ## About the OOP framework
 Since all of these structures use my OOP framework written in ```jscobj2.h```, the APIs are also OOP like.
 Let ```pInst``` be a pointer to an instance of data structure defined in this repo (e.g. an ArrayList) , 
@@ -209,7 +209,7 @@ int (*equals)(const K *k1, const K *k2); //equals() function for keys
 
 void (*freeKey)(K key); //free() function for keys
 
-void (*freeValue)(V value); /free() function for values
+void (*freeValue)(V value); //free() function for values
 ```
 #### Examples
 ```c

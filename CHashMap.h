@@ -2,7 +2,7 @@
 #define CHASHMAP_H
 /*
 	Version 1.0
-	By Sicheng Jiang (UC Berkeley)
+	By Sicheng Jiang
 	An Linked Hash Map in C.
 	2018/04/25
 */
@@ -10,6 +10,8 @@
 #include<stdlib.h>
 #include<string.h>
 #include "jscobj2.h"
+
+#define USE_JSCOBJ
 
 #define CAL_LOAD_FACTOR 2.0
 #define INI_BUCKETS 8

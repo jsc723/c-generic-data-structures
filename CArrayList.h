@@ -2,7 +2,7 @@
 #define CARRAYLIST_H
 /*
 	Version 1.0
-	By Sicheng Jiang (UC Berkeley)
+	By Sicheng Jiang
 	An ArrayList in C.
 	2018/04/19
 */
@@ -75,17 +75,17 @@ Define_Class(T##Array) \
 	Equal##T equals;\
 	void (*freeItem)(T item);\
 With_Methods(T##Array) \
-	pVFTB(T##Array) (*pushBack)(T item);\
-	pVFTB(T##Array) (*pushAll)(T *items, int n);\
-	pVFTB(T##Array) (*expend)(p##T##Array otherList);\
-	pVFTB(T##Array) (*insert)(T item, int index);\
+	void (*pushBack)(T item);\
+	void (*pushAll)(T *items, int n);\
+	void (*expend)(p##T##Array otherList);\
+	void (*insert)(T item, int index);\
 	T (*popBack)();\
 	T (*popAt)(int index);\
 	int (*indexOf)(T item); \
 	p##T##Array (*subList)(int start, int end); \
-	pVFTB(T##Array) (*sort)();\
-	pVFTB(T##Array) (*map)(F_Map##T map_func);\
-	pVFTB(T##Array) (*reduce)(F_Reduce##T reduce_func, T *acc);\
+	void (*sort)();\
+	void (*map)(F_Map##T map_func);\
+	void (*reduce)(F_Reduce##T reduce_func, T *acc);\
 	void (*free)();\
 End_Class(T##Array) \
 __DecDefaultEqual(ArrayList, T)
@@ -95,6 +95,23 @@ __DecDefaultEqual(ArrayList, T)
 //define the constructor
 #define __DecNewArrFuc(T) \
 p##T##Array New##T##Arr();
+
+#define __DefNewArrFucAux(T) \
+p##T##Array New##T##Arr()\
+{\
+	/****/Alloc_Instance(list, T##Array)/****/\
+	list->__vftb__ = &__vftb__##T##Array; \
+	list->arr = (T *)malloc(sizeof(T) * INI_CAP + 1);\
+	if(list->arr == NULL) return NULL;\
+	memset(list->arr, 0, sizeof(T));\
+	list->size = 0;\
+	list->_capacity = INI_CAP; \
+	list->compare = (Compare##T) DFT_CMP;\
+	list->equals = DFT_EQUAL(ArrayList, T);\
+	list->freeItem = NULL;\
+	return list;\
+}
+
 
 #define __DefNewArrFuc(T) \
 Install_Methods(T##Array) \
@@ -111,63 +128,47 @@ Install_Methods(T##Array) \
 	__reduce_##T, \
 	__free_##T \
 End_Install() \
-p##T##Array New##T##Arr()\
-{\
-	/****/Alloc_Instance(list, T##Array)/****/\
-	list->__vftb__ = &__vftb__##T##Array; \
-	list->arr = (T *)malloc(sizeof(T) * INI_CAP + 1);\
-	if(list->arr == NULL) return NULL;\
-	memset(list->arr, 0, sizeof(T));\
-	list->size = 0;\
-	list->_capacity = INI_CAP;\
-	list->compare = (Compare##T) DFT_CMP;\
-	list->equals = DFT_EQUAL(ArrayList, T);\
-	list->freeItem = NULL;\
-	return list;\
-}
+__DefNewArrFucAux(T)
 
 //append item at the end 
 #define __DecPushBack(T)\
-pVFTB(T##Array) __pushBack##T(T thing);
+void __pushBack##T(T thing);
 
 #define __DefPushBack(T)\
-pVFTB(T##Array) __pushBack##T(T thing)\
+void __pushBack##T(T thing)\
 {\
 	/****/getSelf(T##Array)/****/\
 	m(self)->insert(thing, self->size);\
-	return m(self);\
 }
 
 #define __DecPushAll(T) \
-pVFTB(T##Array) __pushAll##T(T *things, int n);
+void __pushAll##T(T *things, int n);
 
 #define __DefPushAll(T) \
-pVFTB(T##Array) __pushAll##T(T *things, int n)\
+void __pushAll##T(T *things, int n)\
 {\
 	/****/getSelf(T##Array)/****/\
 	int i=0;\
 	for(i=0;i<n;i++)\
 		this->pushBack(things[i]);\
-	return m(self);\
 }
 
 //append all items in another arraylist
 #define __DecExpend(T)\
-pVFTB(T##Array) __expend##T(T##Array *things);
+void __expend##T(T##Array *things);
 #define __DefExpend(T)\
-pVFTB(T##Array) __expend##T(T##Array *things)\
+void __expend##T(T##Array *things)\
 {\
 	/****/getSelf(T##Array)/****/\
 	int i=0;\
 	for(i=0;i<things->size;i++)\
 		this->pushBack(things->arr[i]);\
-	return this;\
 }
 
 #define __DecInsert(T)\
-pVFTB(T##Array) __insert##T(T thing, int index);
+void __insert##T(T thing, int index);
 #define __DefInsert(T)\
-pVFTB(T##Array) __insert##T(T thing, int index) {\
+void __insert##T(T thing, int index) {\
 	/****/getSelf(T##Array)/****/\
 	int i;\
 	if(index > self->size) {\
@@ -182,7 +183,6 @@ pVFTB(T##Array) __insert##T(T thing, int index) {\
 	self->arr[index] = thing;\
 	self->size++;\
 	memset(self->arr + self->size, 0, sizeof(T));\
-	return this;\
 }
 
 #define __DecPopBack(T) \
@@ -245,11 +245,12 @@ p##T##Array __subList##T(int start, int end) {\
 #define __DecSort(T) \
 void __mergeHelper##T(const int l, const int mid, const int r, T *L, T *R);\
 void __merge_sort##T(int l, int r, T *L, T *R);\
-pVFTB(T##Array) __mergeSort##T();
+void __mergeSort##T();
 #define __DefSort(T) \
 void __mergeHelper##T(const int l, const int mid, const int r, T *L, T *R)\
 {\
 	/****/getSelf(T##Array)/****/\
+	printf("merge [%d %d %d]\n", l, mid, r);\
 	T *arr = self->arr;\
 	int i, j, k;\
 	int n1 = mid - l + 1;\
@@ -274,12 +275,11 @@ void __mergeHelper##T(const int l, const int mid, const int r, T *L, T *R)\
 	/* Copy the remaining elements of R[], if there are any */\
 	while (j < n2)\
 		arr[k++] = R[j++];\
-	free(L);\
-	free(R);\
 }\
 void __merge_sort##T(int l, int r, T *L, T *R)\
 {\
 	/****/getSelf(T##Array)/****/\
+	printf("[%d %d]\n", l, r);\
 	if (l < r)\
 	{\
 		/* Same as (l+r)/2, but avoids overflow for large l and h */\
@@ -289,36 +289,33 @@ void __merge_sort##T(int l, int r, T *L, T *R)\
 		m(self); __mergeHelper##T(l, mid, r, L, R);\
 	}\
 }\
-pVFTB(T##Array) __mergeSort##T() {\
+void __mergeSort##T() {\
 	/****/getSelf(T##Array)/****/\
-	int n = (int)(self->size * 0.5) + 1;\
+	int n = (int)(self->size / 2) + 1;\
 	T *L = (T *)malloc(sizeof(T) * n);\
 	T *R = (T *)malloc(sizeof(T) * n);\
 	this; __merge_sort##T(0, self->size - 1, L, R);\
 	free(L); free(R); \
-	return this;\
 }
 
 #define __DecMap(T) \
-pVFTB(T##Array) __map_##T(F_Map##T map_func);
+void __map_##T(F_Map##T map_func);
 #define __DefMap(T) \
-pVFTB(T##Array) __map_##T(F_Map##T map_func) {\
+void __map_##T(F_Map##T map_func) {\
 	/****/getSelf(T##Array)/****/\
 	int i;\
 	for (i = 0; i < self->size; i++) \
 		map_func(self->arr + i);\
-	return this; \
 }
 
 #define __DecReduce(T) \
-pVFTB(T##Array) __reduce_##T(F_Reduce##T reduce_func, T *acc);
+void __reduce_##T(F_Reduce##T reduce_func, T *acc);
 #define __DefReduce(T) \
-pVFTB(T##Array) __reduce_##T(F_Reduce##T reduce_func, T *acc) {\
+void __reduce_##T(F_Reduce##T reduce_func, T *acc) {\
 	/****/getSelf(T##Array)/****/\
 	int i; \
 	for(i = 0; i < self->size; i++) \
 		reduce_func(acc, self->arr + i);\
-	return this;\
 }
 
 

@@ -1,10 +1,9 @@
 #ifndef JSCOBJ_H
 #define JSCOBJ_H
 /*
-	Version: 2.0
-	By Sicheng Jiang (UC Berkeley)
+	Version: 2.1
+	By Sicheng Jiang
 	An framework for objective programming in C.
-	Note: this framework is NOT thread save.
 	2018/04/19
 
 -----------------------------Usage------------------------------------
@@ -80,7 +79,7 @@ is included in the macro Define_Class().
 #define this m(self)
 #define m(pInst) (pInst)->_method_(pInst)->__vftb__
 
-extern void *_obj_arg_;
+extern __thread void *_obj_arg_;
 void *__method__(void *obj);
 
 #define VFTB(T) _VFTB_##T
@@ -157,12 +156,16 @@ int DFT_CMP(const void *a, const void *b);
 int DFT_CMP_N_##Y(const Y *a, const Y *b);
 
 #define __DefDefaultCmpN(Y) \
+int DFT_CMP_N_##Y(const Y *a, const Y *b) { return *a - *b;}
+
+#define __DefDefaultCmpNF(Y) \
 int DFT_CMP_N_##Y(const Y *a, const Y *b) { double t = *a - *b;\
 	if (t == 0) return 0;\
 	if (t > 0) return 1;\
 	return -1;\
 }
 
+#define HasDefaultCmp(T) HasDefaultCmp_##T
 __DecDefaultCmpN(int)
 __DecDefaultCmpN(short)
 __DecDefaultCmpN(char)
@@ -181,5 +184,20 @@ typedef struct _Optional_##T {\
 
 #define Optional(T) _Optional_##T
 
+
+#if !defined(USE_JSCOBJ_ONCE)
+#define USE_JSCOBJ_ONCE
+	__thread void *_obj_arg_;
+	void *__method__(void *obj){ _obj_arg_ = obj;return obj; }
+	int DFT_CMP(const void *a, const void *b) { printf("comparer not defined!"); system("pause"); exit(1); }
+
+	__DefDefaultCmpN(int)
+	__DefDefaultCmpN(short)
+	__DefDefaultCmpN(char)
+	__DefDefaultCmpN(long)
+	__DefDefaultCmpN(size_t)
+	__DefDefaultCmpNF(float)
+	__DefDefaultCmpNF(double)
+#endif
 
 #endif

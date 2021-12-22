@@ -4,8 +4,7 @@
 #include "jscobj2.h"
 #include "CArrayList.h"
 
-
-
+#define USE_JSCOBJ
 
 #define PriorityQueue(E) pCPriorityQueue##E
 #define NewPriorityQueue(E) NewCPQ_##E

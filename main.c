@@ -53,7 +53,7 @@ int main() {
 	word w1 = { "hello", 5 };
 	word w2 = { "I", 10 };
 	word w3 = { "say", 8 };
-	word w4 = { "yukarin", 1 };
+	word w4 = { "world", 1 };
 	m(pq)->add(w1);
 	m(pq)->add(w2);
 	m(pq)->add(w3);

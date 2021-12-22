@@ -1,5 +1,5 @@
 # c-generic-data-structures
-some common data structures implemented in **C** (more specifically, C99), supporting generic types.
+some common data structures implemented in **C** (compiles under `-std=c99` and above), supporting generic types.
 And the APIs are provided in a objective orienting style.
 
 ## About the OOP framework
@@ -26,22 +26,17 @@ NewArrayList(T) //name of the constructor of ArrayList<T>
 ```
 ##### Methods
 ```c
-/*
-  append the item at the end of the array,
-  it returns the pointer to its virtual function table, the same thing returnd by m(), so that you can use it 
-  to call another method.
-  This is just for convenience. If you don't know what it is, just treat pVFTB(ArrayList<T>) as void.
-*/
-pVFTB(ArrayList<T>) pushBack(T item); 
+//append the item at the end of the array
+void pushBack(T item); 
   
 //append all n items at the end of the array
-pVFTB(ArrayList<T>) pushAll(T *items, int n); 
+void pushAll(T *items, int n); 
   
 //append all items in the otherList to the end of the array
-pVFTB(ArrayList<T>) expend(ArrayList<T> * otherList); 
+void expend(ArrayList<T> * otherList); 
 
 //insert the item at the index
-pVFTB(ArrayList<T>) insert(T item, int index); 
+void insert(T item, int index); 
   
 //pop the last item
 T popBack();
@@ -56,17 +51,17 @@ int indexOf(T item);
 ArrayList<T> *subList(int start, int end); 
 
 //sort the list using merge sort, must set the comparater first (see the next session)
-pVFTB(ArrayList<T>) sort();
+void sort();
 
 // apply map_func to every items in the array
-pVFTB(ArrayList<T>) map(void (*map_func)(T *t));
+void map(void (*map_func)(T *t));
 
 /*
   same as 
   for each item in arraylist:
     reduce_func(acc, &item);
 */
-pVFTB(ArrayList<T>) reduce(void (*reduce_func)(T *t1, T *t2), T *acc);
+void reduce(void (*reduce_func)(T *t1, T *t2), T *acc);
 
 // free the arraylist
 void free();

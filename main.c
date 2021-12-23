@@ -6,7 +6,7 @@
 #include "JSPriorityQueue.h"
 //#include "JSLinkedHashMap.h"
 #include "userDefined.h"
-#include "JSHashTable.h"
+#include "JSHashSet.h"
 
 unsigned int hashInt(int i) { return i; }
 
@@ -41,8 +41,8 @@ Define_JSPriorityQueue(word)
 Declare_JSHashMap(string, int)
 Define_JSHashMap(string, int)
 
-Declare_JSHashTable(int)
-Define_JSHashTable(int)
+Declare_JSHashSet(int)
+Define_JSHashSet(int)
 
 string String(const char *s) {
 	int sz = strlen(s);
@@ -92,7 +92,7 @@ int main() {
 	}
 	methodof(map)->free();
 
-	JSHashTable(int) set = NewJSHashTableFull(int, hashInt, JS_DEFAULT_CMP(int), freeInt);
+	JSHashSet(int) set = NewJSHashSetFull(int, hashInt, JS_DEFAULT_CMP(int), freeInt);
 	for(int i = 100; i < 120; i++) {
 		methodof(set)->put(i);
 	}
@@ -101,7 +101,7 @@ int main() {
 	methodof(set)->put(120);
 	methodof(set)->put(1248);
 	methodof(set)->remove(100);
-	JSHashTableForEach(int, set, p) {
+	JSHashSetForEach(int, set, p) {
 		printf("%d\n", p->key);
 	}
 	methodof(set)->free();

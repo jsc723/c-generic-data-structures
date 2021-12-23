@@ -128,32 +128,32 @@ int main() {
   
 ```
 
-## JSHashTable
+## JSHashSet
 header file: 
 ```
-JSHashTable.h
+JSHashSet.h
 ```
 #### APIs
 ##### Declare and Define
 ```c
-Declare_JSHashTable(K) // Declare class HashTable<K> (an HashTable whose keys have type K)
+Declare_JSHashSet(K) // Declare class HashSet<K> (an HashSet whose keys have type K)
 
-Define_JSHashTable(K) // Define class HashTable<K>
+Define_JSHashSet(K) // Define class HashSet<K>
 
 ```
 ##### Type Name
 ```c
-JSHashTable(K) //type name of an pointer to an HashTable<K> instance
+JSHashSet(K) //type name of an pointer to an HashSet<K> instance
 ```
 ##### Constructors
 ```c
-JSHashTable(K) NewJSHashTable(K, unsigned int(*hash_function)(K)); //prototype of the constructor of HashMap<K, V>
+JSHashSet(K) NewJSHashSet(K, unsigned int(*hash_function)(K)); //prototype of the constructor of HashMap<K, V>
 
-JSHashTable(K) NewJSHashTableFull(K, hash, cmp, freeKey); 
+JSHashSet(K) NewJSHashSetFull(K, hash, cmp, freeKey); 
 ```
 ##### Methods
 ```c
-//put a key into the hashtable.
+//put a key into the HashSet.
 void put(K k);
 
 //check if the hashmap contains the given key. returns 1(true) or 0(false)

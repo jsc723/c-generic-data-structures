@@ -9,49 +9,51 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include "sglib.h"
 #include "jscobj2.h"
 
 #define INI_CAP 8
 
 //Define a pointer to an ArrayList<T> instance
-#define ArrayList(T) p##T##Array
+#define JSArrayList(T) pJS##T##Array
 
 //constructor
-#define NewArrayList(T) New##T##Arr
+#define NewJSArrayList(T) NewJS##T##Arr()
 
 
-#define Declare_CArrayList(T) \
-__DecArr(T) \
-__DecPushBack(T) \
-__DecPushAll(T) \
-__DecExpend(T)\
-__DecInsert(T) \
-__DecPopBack(T)\
-__DecPop(T) \
-__DecIndexOf(T)\
-__DecSubList(T)\
-__DecSort(T) \
-__DecMap(T) \
-__DecReduce(T)\
-__DecFree(T)\
-__DecNewArrFuc(T)
+#define Declare_JSArrayList(T) \
+__JS_DecArr(T) \
+__JS_DecArrPushBack(T) \
+__JS_DecArrPushAll(T) \
+__JS_DecArrExpend(T)\
+__JS_DecArrInsert(T) \
+__JS_DecArrPopBack(T)\
+__JS_DecArrPop(T) \
+__JS_DecArrIndexOf(T) \
+__JS_DecArrSubList(T)\
+__JS_DecArrSort(T) \
+__JS_DecArrStableSort(T) \
+__JS_DecArrMap(T) \
+__JS_DecArrReduce(T)\
+__JS_DecArrFree(T)\
+__JS_DecArrNewArrFuc(T)
 
 
-#define Define_CArrayList(T) \
-__DefDefaultEqual(ArrayList, T) \
-__DefPushBack(T) \
-__DefPushAll(T) \
-__DefExpend(T)\
-__DefInsert(T) \
-__DefPopBack(T)\
-__DefPop(T) \
-__DefIndexOf(T)\
-__DefSubList(T)\
-__DefSort(T) \
-__DefMap(T) \
-__DefReduce(T)\
-__DefFree(T)\
-__DefNewArrFuc(T)
+#define Define_JSArrayList(T) \
+__JS_DefArrPushBack(T) \
+__JS_DefArrPushAll(T) \
+__JS_DefArrExpend(T)\
+__JS_DefArrInsert(T) \
+__JS_DefArrPopBack(T)\
+__JS_DefArrPop(T) \
+__JS_DefArrIndexOf(T) \
+__JS_DefArrSubList(T)\
+__JS_DefArrSort(T) \
+__JS_DefArrStableSort(T) \
+__JS_DefArrMap(T) \
+__JS_DefArrReduce(T)\
+__JS_DefArrFree(T)\
+__JS_DefArrNewArrFuc(T)
 
 /* TODO
 unique
@@ -62,59 +64,54 @@ unique
 
 //-------------------------------------------- 
 //define the ArrayList class
-#define __DecArr(T) \
-typedef int (*Compare##T)(const T *t1, const T *t2);\
-typedef int (*Equal##T)(const T *t1, const T *t2);\
+#define __JS_DecArr(T) \
+__DefCompare(T)\
 typedef void (*F_Map##T)(T *t);\
 typedef void (*F_Reduce##T)(T *t1, T *t2);\
-Define_Class(T##Array) \
+Define_Class(JS##T##Array) \
 	T *arr; \
 	int size; \
 	int _capacity; \
-	Compare##T compare; \
-	Equal##T equals;\
 	void (*freeItem)(T item);\
-With_Methods(T##Array) \
+With_Methods(JS##T##Array) \
 	void (*pushBack)(T item);\
 	void (*pushAll)(T *items, int n);\
-	void (*expend)(p##T##Array otherList);\
+	void (*expend)(pJS##T##Array otherList);\
 	void (*insert)(T item, int index);\
 	T (*popBack)();\
 	T (*popAt)(int index);\
-	int (*indexOf)(T item); \
-	p##T##Array (*subList)(int start, int end); \
-	void (*sort)();\
+	int (*indexOf)(T item, Compare##T compare); \
+	pJS##T##Array (*subList)(int start, int end); \
+	void (*sort)(Compare##T compare);\
+	void (*stableSort)(Compare##T compare);\
 	void (*map)(F_Map##T map_func);\
 	void (*reduce)(F_Reduce##T reduce_func, T *acc);\
 	void (*free)();\
-End_Class(T##Array) \
-__DecDefaultEqual(ArrayList, T)
+End_Class(JS##T##Array)
 
 
 
 //define the constructor
-#define __DecNewArrFuc(T) \
-p##T##Array New##T##Arr();
+#define __JS_DecArrNewArrFuc(T) \
+pJS##T##Array NewJS##T##Arr();
 
-#define __DefNewArrFucAux(T) \
-p##T##Array New##T##Arr()\
+#define __JS_DefArrNewArrFucAux(T) \
+pJS##T##Array NewJS##T##Arr()\
 {\
-	/****/Alloc_Instance(list, T##Array)/****/\
-	list->__vftb__ = &__vftb__##T##Array; \
+	/****/Alloc_Instance(list, JS##T##Array)/****/\
+	list->__vftb__ = &__vftb__JS##T##Array; \
 	list->arr = (T *)malloc(sizeof(T) * INI_CAP + 1);\
 	if(list->arr == NULL) return NULL;\
 	memset(list->arr, 0, sizeof(T));\
 	list->size = 0;\
 	list->_capacity = INI_CAP; \
-	list->compare = (Compare##T) DFT_CMP;\
-	list->equals = DFT_EQUAL(ArrayList, T);\
 	list->freeItem = NULL;\
 	return list;\
 }
 
 
-#define __DefNewArrFuc(T) \
-Install_Methods(T##Array) \
+#define __JS_DefArrNewArrFuc(T) \
+Install_Methods(JS##T##Array) \
 	__pushBack##T, \
 	__pushAll##T, \
 	__expend##T, \
@@ -123,53 +120,54 @@ Install_Methods(T##Array) \
 	__pop##T##At, \
 	__indexOf##T, \
 	__subList##T, \
+	__quickSort##T, \
 	__mergeSort##T, \
 	__map_##T, \
 	__reduce_##T, \
 	__free_##T \
 End_Install() \
-__DefNewArrFucAux(T)
+__JS_DefArrNewArrFucAux(T)
 
 //append item at the end 
-#define __DecPushBack(T)\
+#define __JS_DecArrPushBack(T)\
 void __pushBack##T(T thing);
 
-#define __DefPushBack(T)\
+#define __JS_DefArrPushBack(T)\
 void __pushBack##T(T thing)\
 {\
-	/****/getSelf(T##Array)/****/\
+	/****/getSelf(JS##T##Array)/****/\
 	m(self)->insert(thing, self->size);\
 }
 
-#define __DecPushAll(T) \
+#define __JS_DecArrPushAll(T) \
 void __pushAll##T(T *things, int n);
 
-#define __DefPushAll(T) \
+#define __JS_DefArrPushAll(T) \
 void __pushAll##T(T *things, int n)\
 {\
-	/****/getSelf(T##Array)/****/\
+	/****/getSelf(JS##T##Array)/****/\
 	int i=0;\
 	for(i=0;i<n;i++)\
 		this->pushBack(things[i]);\
 }
 
 //append all items in another arraylist
-#define __DecExpend(T)\
-void __expend##T(T##Array *things);
-#define __DefExpend(T)\
-void __expend##T(T##Array *things)\
+#define __JS_DecArrExpend(T)\
+void __expend##T(JS##T##Array *things);
+#define __JS_DefArrExpend(T)\
+void __expend##T(JS##T##Array *things)\
 {\
-	/****/getSelf(T##Array)/****/\
+	/****/getSelf(JS##T##Array)/****/\
 	int i=0;\
 	for(i=0;i<things->size;i++)\
 		this->pushBack(things->arr[i]);\
 }
 
-#define __DecInsert(T)\
+#define __JS_DecArrInsert(T)\
 void __insert##T(T thing, int index);
-#define __DefInsert(T)\
+#define __JS_DefArrInsert(T)\
 void __insert##T(T thing, int index) {\
-	/****/getSelf(T##Array)/****/\
+	/****/getSelf(JS##T##Array)/****/\
 	int i;\
 	if(index > self->size) {\
 		printf("index out of boundary!"); \
@@ -185,21 +183,21 @@ void __insert##T(T thing, int index) {\
 	memset(self->arr + self->size, 0, sizeof(T));\
 }
 
-#define __DecPopBack(T) \
+#define __JS_DecArrPopBack(T) \
 T __popBack##T();
-#define __DefPopBack(T) \
+#define __JS_DefArrPopBack(T) \
 T __popBack##T() {\
-	/****/getSelf(T##Array)/****/\
+	/****/getSelf(JS##T##Array)/****/\
 	return this->popAt(self->size - 1);\
 }
 
 //pop the item at index
-#define __DecPop(T)\
+#define __JS_DecArrPop(T)\
 T __pop##T##At(int index);
-#define __DefPop(T)\
+#define __JS_DefArrPop(T)\
 T __pop##T##At(int index)\
 {\
-	/****/getSelf(T##Array)/****/\
+	/****/getSelf(JS##T##Array)/****/\
 	int i;\
 	if(self->size <= index) {\
 		printf("index out of boundary!");\
@@ -213,26 +211,26 @@ T __pop##T##At(int index)\
 	return p;\
 }
 
-#define __DecIndexOf(T) \
-int __indexOf##T(T item);
-#define __DefIndexOf(T) \
-int __indexOf##T(T item) {\
-	/****/getSelf(T##Array)/****/\
+#define __JS_DecArrIndexOf(T) \
+int __indexOf##T(T item, Compare##T compare);
+#define __JS_DefArrIndexOf(T) \
+int __indexOf##T(T item, Compare##T compare) {\
+	/****/getSelf(JS##T##Array)/****/\
 	int i; \
 	for (i = 0; i < self->size; i++) \
-		if (self->compare(&(self->arr[i]), &item) == 0) \
+		if (compare(self->arr[i], item) == 0) \
 			return i;\
 	return -1;\
 }
 
 //find sub-list [start, end), non-destructive
 //Note: each item in the sublist is a shallow copy of the original one.
-#define __DecSubList(T) \
-p##T##Array __subList##T(int start, int end);
-#define __DefSubList(T) \
-p##T##Array __subList##T(int start, int end) {\
-	/****/getSelf(T##Array)/****/\
-	p##T##Array sub = New##T##Arr(); \
+#define __JS_DecArrSubList(T) \
+pJS##T##Array __subList##T(int start, int end);
+#define __JS_DefArrSubList(T) \
+pJS##T##Array __subList##T(int start, int end) {\
+	/****/getSelf(JS##T##Array)/****/\
+	pJS##T##Array sub = NewJS##T##Arr(); \
 	int i;\
 	if(end == -1) end = self->size;\
 	for (i = start; i < end && i < self->size; i++) {\
@@ -241,16 +239,26 @@ p##T##Array __subList##T(int start, int end) {\
 	return sub;\
 }
 
+#define __JS_DecArrSort(T) \
+void __quickSort##T(Compare##T compare);
+
+#define __JS_DefArrSort(T) \
+void __quickSort##T(Compare##T compare) {\
+	/****/getSelf(JS##T##Array)/****/\
+	printf("qsort\n");\
+	SGLIB_ARRAY_SINGLE_QUICK_SORT(T, self->arr, self->size, compare);\
+}
+
 //merge sort arraylist
-#define __DecSort(T) \
-void __mergeHelper##T(const int l, const int mid, const int r, T *L, T *R);\
-void __merge_sort##T(int l, int r, T *L, T *R);\
-void __mergeSort##T();
-#define __DefSort(T) \
-void __mergeHelper##T(const int l, const int mid, const int r, T *L, T *R)\
+#define __JS_DecArrStableSort(T) \
+void __mergeHelper##T(const int l, const int mid, const int r, T *L, T *R, Compare##T compare);\
+void __merge_sort##T(int l, int r, T *L, T *R, Compare##T compare);\
+void __mergeSort##T(Compare##T compare);
+
+#define __JS_DefArrStableSort(T) \
+void __mergeHelper##T(const int l, const int mid, const int r, T *L, T *R, Compare##T compare)\
 {\
-	/****/getSelf(T##Array)/****/\
-	printf("merge [%d %d %d]\n", l, mid, r);\
+	/****/getSelf(JS##T##Array)/****/\
 	T *arr = self->arr;\
 	int i, j, k;\
 	int n1 = mid - l + 1;\
@@ -264,7 +272,7 @@ void __mergeHelper##T(const int l, const int mid, const int r, T *L, T *R)\
 	i = 0; j = 0; k = l; \
 	while (i < n1 && j < n2)\
 	{\
-		if (self->compare(L + i, R + j) <= 0)\
+		if (compare(L[i], R[j]) <= 0)\
 			arr[k++] = L[i++];\
 		else\
 			arr[k++] = R[j++];\
@@ -276,43 +284,42 @@ void __mergeHelper##T(const int l, const int mid, const int r, T *L, T *R)\
 	while (j < n2)\
 		arr[k++] = R[j++];\
 }\
-void __merge_sort##T(int l, int r, T *L, T *R)\
+void __merge_sort##T(int l, int r, T *L, T *R, Compare##T compare)\
 {\
-	/****/getSelf(T##Array)/****/\
-	printf("[%d %d]\n", l, r);\
+	/****/getSelf(JS##T##Array)/****/\
 	if (l < r)\
 	{\
 		/* Same as (l+r)/2, but avoids overflow for large l and h */\
 		int mid = l + (r - l) / 2;\
-		this; __merge_sort##T(l, mid, L, R);\
-		this; __merge_sort##T(mid + 1, r, L, R); \
-		m(self); __mergeHelper##T(l, mid, r, L, R);\
+		this; __merge_sort##T(l, mid, L, R, compare);\
+		this; __merge_sort##T(mid + 1, r, L, R, compare); \
+		m(self); __mergeHelper##T(l, mid, r, L, R, compare);\
 	}\
 }\
-void __mergeSort##T() {\
-	/****/getSelf(T##Array)/****/\
+void __mergeSort##T(Compare##T compare) {\
+	/****/getSelf(JS##T##Array)/****/\
 	int n = (int)(self->size / 2) + 1;\
 	T *L = (T *)malloc(sizeof(T) * n);\
 	T *R = (T *)malloc(sizeof(T) * n);\
-	this; __merge_sort##T(0, self->size - 1, L, R);\
+	this; __merge_sort##T(0, self->size - 1, L, R, compare);\
 	free(L); free(R); \
 }
 
-#define __DecMap(T) \
+#define __JS_DecArrMap(T) \
 void __map_##T(F_Map##T map_func);
-#define __DefMap(T) \
+#define __JS_DefArrMap(T) \
 void __map_##T(F_Map##T map_func) {\
-	/****/getSelf(T##Array)/****/\
+	/****/getSelf(JS##T##Array)/****/\
 	int i;\
 	for (i = 0; i < self->size; i++) \
 		map_func(self->arr + i);\
 }
 
-#define __DecReduce(T) \
+#define __JS_DecArrReduce(T) \
 void __reduce_##T(F_Reduce##T reduce_func, T *acc);
-#define __DefReduce(T) \
+#define __JS_DefArrReduce(T) \
 void __reduce_##T(F_Reduce##T reduce_func, T *acc) {\
-	/****/getSelf(T##Array)/****/\
+	/****/getSelf(JS##T##Array)/****/\
 	int i; \
 	for(i = 0; i < self->size; i++) \
 		reduce_func(acc, self->arr + i);\
@@ -320,11 +327,11 @@ void __reduce_##T(F_Reduce##T reduce_func, T *acc) {\
 
 
 //destructor
-#define __DecFree(T) \
+#define __JS_DecArrFree(T) \
 void __free_##T();
-#define __DefFree(T) \
+#define __JS_DefArrFree(T) \
 void __free_##T() { \
-	/****/getSelf(T##Array)/****/\
+	/****/getSelf(JS##T##Array)/****/\
 	int i;\
 	if (self->freeItem) {\
 		for(i = 0; i < self->size; i++)\

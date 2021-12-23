@@ -5,7 +5,6 @@ word Word(const char *s, size_t count) {
 	return w;
 }
 
-
 void str_cpy(char *dst, const char *src) {
 	char *p = dst;
 	while (*src)
@@ -32,10 +31,10 @@ void strConCat(string *acc, string *ps) {
 	str_cpy(*acc + n, *ps);
 }
 
-Define_CArrayList(int)
+// Define_CArrayList(int)
 
-Define_CArrayList(string)
+// Define_CArrayList(string)
 
-Define_CHashMap(int, double)
+// Define_CHashMap(int, double)
 
-Define_CHashMap(string, int)
+// Define_CHashMap(string, int)

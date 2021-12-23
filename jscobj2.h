@@ -79,8 +79,8 @@ is included in the macro Define_Class().
 #define this m(self)
 #define m(pInst) (pInst)->_method_(pInst)->__vftb__
 
-extern __thread void *_obj_arg_;
-void *__method__(void *obj);
+extern __thread void *_js_obj_arg_;
+void *__js_method__(void *obj);
 
 #define VFTB(T) _VFTB_##T
 #define pVFTB(T) _VFTB_##T *
@@ -104,7 +104,7 @@ extern _VFTB_##T __vftb__##T;\
 
 //--------------------second group----------------------------------------
 #define Install_Methods(T) \
-T * T##_Method(T *ps) { return (T *)__method__(ps); } \
+T * T##_Method(T *ps) { return (T *)__js_method__(ps); } \
 _VFTB_##T __vftb__##T = {
 
 #define End_Install() };
@@ -125,8 +125,10 @@ pInst->__vftb__ = &__vftb__##T;
 //} __vftb__##T.name = _##T##_##name;
 
 //--------------------private macro---------------------------------------------
-#define getSelf(T) T * self = (T *)_obj_arg_;
+#define getSelf(T) T * self = (T *)_js_obj_arg_;
 //#define dec_Method(T) struct T * (* _method_)(struct T * ps)
+
+#define __DefCompare(T) typedef int (*Compare##T)(const T t1, const T t2);
 
 #define __DecDefaultEqual(ClassType, Y) \
 int DFT_EQ_##ClassType##_##Y(const Y *a, const Y *b);
@@ -150,54 +152,29 @@ int DFT_EQ_##ClassType##_##Y(const Y *a, const Y *b) {\
 
 //----------default comparer---------//
 
-int DFT_CMP(const void *a, const void *b);
+//int DFT_CMP(const void *a, const void *b);
 
-#define __DecDefaultCmpN(Y) \
-int DFT_CMP_N_##Y(const Y *a, const Y *b);
+#define __JS_DecDefaultCmpN(Y) \
+int JS_DFT_CMP_N_##Y(const Y a, const Y b);
 
-#define __DefDefaultCmpN(Y) \
-int DFT_CMP_N_##Y(const Y *a, const Y *b) { return *a - *b;}
+#define __JS_DefDefaultCmpN(Y) \
+int JS_DFT_CMP_N_##Y(const Y a, const Y b) { return a - b;}
 
-#define __DefDefaultCmpNF(Y) \
-int DFT_CMP_N_##Y(const Y *a, const Y *b) { double t = *a - *b;\
+#define __JS_DefDefaultCmpNF(Y) \
+int JS_DFT_CMP_N_##Y(const Y a, const Y b) { double t = a - b;\
 	if (t == 0) return 0;\
 	if (t > 0) return 1;\
 	return -1;\
 }
 
-#define HasDefaultCmp(T) HasDefaultCmp_##T
-__DecDefaultCmpN(int)
-__DecDefaultCmpN(short)
-__DecDefaultCmpN(char)
-__DecDefaultCmpN(long)
-__DecDefaultCmpN(size_t)
-__DecDefaultCmpN(float)
-__DecDefaultCmpN(double)
+__JS_DecDefaultCmpN(int)
+__JS_DecDefaultCmpN(short)
+__JS_DecDefaultCmpN(char)
+__JS_DecDefaultCmpN(long)
+__JS_DecDefaultCmpN(size_t)
+__JS_DecDefaultCmpN(float)
+__JS_DecDefaultCmpN(double)
 
-#define DFT_CMPN(Y) DFT_CMP_N_##Y
-
-#define _Define_Optional(T)\
-typedef struct _Optional_##T {\
-	unsigned char valid;\
-	T value;\
-}_Optional_##T;
-
-#define Optional(T) _Optional_##T
-
-
-#if !defined(USE_JSCOBJ_ONCE)
-#define USE_JSCOBJ_ONCE
-	__thread void *_obj_arg_;
-	void *__method__(void *obj){ _obj_arg_ = obj;return obj; }
-	int DFT_CMP(const void *a, const void *b) { printf("comparer not defined!"); system("pause"); exit(1); }
-
-	__DefDefaultCmpN(int)
-	__DefDefaultCmpN(short)
-	__DefDefaultCmpN(char)
-	__DefDefaultCmpN(long)
-	__DefDefaultCmpN(size_t)
-	__DefDefaultCmpNF(float)
-	__DefDefaultCmpNF(double)
-#endif
+#define JS_DEFAULT_CMP(Y) JS_DFT_CMP_N_##Y
 
 #endif

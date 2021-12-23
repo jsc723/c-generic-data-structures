@@ -4,8 +4,9 @@
 #include <ctype.h>
 #include "CHashMap.h"
 #include "CPriorityQueue.h"
+#include "CHashMap.h"
 #include "userDefined.h"
-
+#include "CHashTable.h"
 
 unsigned int hashInt(int i) { return i; }
 
@@ -31,11 +32,20 @@ int str_eq(const string *p1, const string *p2) {
 	return strcmp(*p1, *p2) == 0;
 }
 
-Declare_CPriorityQueue(double)
-Define_CPriorityQueue(double)
+Declare_JSPriorityQueue(double)
+Define_JSPriorityQueue(double)
 
-Declare_CPriorityQueue(word)
-Define_CPriorityQueue(word)
+Declare_JSPriorityQueue(word)
+Define_JSPriorityQueue(word)
+
+Declare_CHashMap(int, string)
+Define_CHashMap(int, string)
+
+Declare_CHashMap(string, int)
+Define_CHashMap(string, int)
+
+Declare_CHashTable(int)
+Define_CHashTable(int)
 
 string String(const char *s) {
 	int sz = strlen(s);
@@ -44,12 +54,12 @@ string String(const char *s) {
 	return str;
 }
 
-int cmpword(const word *w1, const word *w2) {
-	return w1->count - w2->count;
+int cmpword(const word w1, const word w2) {
+	return w1.count - w2.count;
 }
 
 int main() {
-	PriorityQueue(word) pq = NewPriorityQueue(word)(cmpword);
+	PriorityQueue(word) pq = NewPriorityQueue(word, cmpword);
 	word w1 = { "hello", 5 };
 	word w2 = { "I", 10 };
 	word w3 = { "say", 8 };
@@ -58,11 +68,40 @@ int main() {
 	m(pq)->add(w2);
 	m(pq)->add(w3);
 	m(pq)->add(w4);
-	Optional(word) t;
-	while ((t = m(pq)->poll()).valid) {
-		printf("%s %d\n", t.value.v, t.value.count);
+	word t;
+	while (m(pq)->size()) {
+		t = m(pq)->poll();
+		printf("%s %d\n", t.v, t.count);
 	}
 	m(pq)->free();
-	system("pause");
+
+	HashMap(string, int) map = NewHashMap(string, int, hashString, (Comparestring) strcmp);
+	for(int i = 0; i < 20; i++) {
+		string s = randomStr(10);
+		printf("insert %s %d\n", s, i);
+		m(map)->put(s, i);
+	}
+	m(map)->remove("phqghumeay");
+	// HashMapEntry(string, int) head = m(map)->enumerate(), p;
+	// for(p = head->next; p != head; p = p->next) {
+	// 	printf("%s %d\n", p->key, p->value);
+	// }
+	HashMapForEach(string, int, map, e) {
+		printf("%s %d\n", e->key, e->value);
+	}
+
+	HashTable(int) set = NewHashTable(int, hashInt, JS_DEFAULT_CMP(int));
+	for(int i = 100; i < 120; i++) {
+		m(set)->put(i);
+	}
+	m(set)->put(10);
+	m(set)->put(14);
+	m(set)->put(120);
+	m(set)->put(1248);
+	m(set)->remove(100);
+	HashTableForEach(int, set, p) {
+		printf("%d\n", p->key);
+	}
+
 	return 0;
 }

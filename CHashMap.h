@@ -17,10 +17,11 @@
 #define INI_BUCKETS 8
 
 #define HashMap(K, V) pCHashMap##K##_##V
-#define NewHashMap(K, V) NewHashMap##K##_##V
+#define NewHashMap(K, V, hash, cmp) NewHashMap##K##_##V(hash, cmp)
 #define HashMapEntry(K, V) pCHashMapNode##K##_##V
 
 #define Declare_CHashMap(K, V)\
+__DefCompare(K)\
 __DecCHashMapNode(K, V)\
 __DecCHashMap(K, V) \
 __DecHashMapPut(K, V) \
@@ -36,7 +37,6 @@ __DecNewHashMap(K, V)
 
 #define Define_CHashMap(K, V)\
  __DefCHashMapNode(K, V)\
- __DefDefaultEqual(HashMap, K) \
  __DefHashMapPut(K, V) \
 __DefHashMapResize(K, V) \
 __DefHashMapGet(K, V) \
@@ -85,7 +85,6 @@ pCHashMapNode##K##_##V _NewCMapHead##K##_##V() {\
 
 #define __DecCHashMap(K, V)\
 typedef unsigned int(*HashFunc##K##_##V)(K k);\
-typedef int(*KeyEquals##K##_##V)(const K *k1, const K *k2); \
 Define_Class(CHashMap##K##_##V)\
 	pCHashMapNode##K##_##V *buckets;\
 	pCHashMapNode##K##_##V head;\
@@ -93,7 +92,7 @@ Define_Class(CHashMap##K##_##V)\
 	size_t length; /*num of buckets*/\
 	size_t size; /*num of items*/\
 	HashFunc##K##_##V h;\
-	KeyEquals##K##_##V equals;\
+	Compare##K compare;\
 	void (*freeKey)(K key);\
 	void (*freeValue)(V value);\
 With_Methods(CHashMap##K##_##V)\
@@ -105,8 +104,7 @@ With_Methods(CHashMap##K##_##V)\
 	pCHashMap##K##_##V (*clone)();\
 	pCHashMapNode##K##_##V (*enumerate)();\
 	void(*free)();\
-End_Class(CHashMap##K##_##V)\
-__DecDefaultEqual(HashMap, K)
+End_Class(CHashMap##K##_##V)
 
 
 
@@ -121,9 +119,9 @@ void __hashMapPut##K##_##V(K k, V v) {\
 	}\
 	int b = self->h(k) % self->length;\
 	pCHashMapNode##K##_##V p = self->buckets[b];\
-	KeyEquals##K##_##V eq = self->equals;\
+	Compare##K cmp = self->compare;\
 	while (p) {\
-		if (eq(&(p->key), &k)) {\
+		if (cmp(p->key, k) == 0) {\
 			if(self->freeValue) self->freeValue(p->value);\
 			p->value = v;\
 			if(self->freeKey) self->freeKey(k);\
@@ -174,11 +172,11 @@ V __hashMapGet##K##_##V(K k) {\
 	/****/getSelf(CHashMap##K##_##V)/****/\
 	int b = self->h(k) % self->length;\
 	pCHashMapNode##K##_##V p = self->buckets[b], q = self->_cachedItem;\
-	KeyEquals##K##_##V eq = self->equals;\
-	if (q && eq(&(q->key), &k))\
+	Compare##K cmp = self->compare;\
+	if (q && cmp(q->key, k) == 0)\
 		return q->value;\
 	while (p) {\
-		if (eq(&(p->key), &k)) {\
+		if (cmp(p->key, k) == 0) {\
 			return p->value;\
 		}\
 		p = p->_nextInBucket;\
@@ -195,9 +193,9 @@ int __hashMapContainsKey##K##_##V(K k) {\
 	/****/getSelf(CHashMap##K##_##V)/****/\
 		int b = self->h(k) % self->length;\
 	pCHashMapNode##K##_##V p = self->buckets[b];\
-	KeyEquals##K##_##V eq = self->equals;\
+	Compare##K cmp = self->compare;\
 	while (p) {\
-		if (eq(&(p->key), &k)) {\
+		if (cmp(p->key, k) == 0) {\
 			self->_cachedItem = p;\
 			return 1;\
 		}\
@@ -215,15 +213,15 @@ void __hashMapRemove##K##_##V(K k) {\
 	int b = self->h(k) % self->length;\
 	pCHashMapNode##K##_##V p = self->buckets[b], q;\
 	pCHashMapNode##K##_##V prev, next;\
-	KeyEquals##K##_##V eq = self->equals;\
-	if (p && eq(&(p->key), &k)) {\
+	Compare##K cmp = self->compare;\
+	if (p && cmp(p->key, k) == 0) {\
 		self->buckets[b] = p->_nextInBucket;\
 	}\
 	else {\
 		while(p) {\
 			q = p;\
 			p = p->_nextInBucket;\
-			if (p && eq(&(p->key), &k)) {\
+			if (p && cmp(p->key, k) == 0) {\
 				q->_nextInBucket = p->_nextInBucket;\
 				break;\
 			}\
@@ -274,7 +272,7 @@ pCHashMap##K##_##V __hashMapClone##K##_##V();
 #define __DefHashMapClone(K, V)\
 pCHashMap##K##_##V __hashMapClone##K##_##V() {\
 	/****/getSelf(CHashMap##K##_##V)/****/\
-	pCHashMap##K##_##V map = NewHashMap##K##_##V(self->h);\
+	pCHashMap##K##_##V map = NewHashMap##K##_##V(self->h, self->compare);\
 	pCHashMapNode##K##_##V head = self->head, p = head->next;\
 	while (p != head) {\
 		m(map)->put(p->key, p->value);\
@@ -314,7 +312,7 @@ void __hashMapFree##K##_##V() {\
 	free(self);\
 }
 #define __DecNewHashMap(K, V) \
-pCHashMap##K##_##V NewHashMap##K##_##V(HashFunc##K##_##V hash);
+pCHashMap##K##_##V NewHashMap##K##_##V(HashFunc##K##_##V hash, Compare##K compare);
 
 #define __DefNewHashMap(K, V)\
 Install_Methods(CHashMap##K##_##V) \
@@ -327,7 +325,7 @@ __hashMapClone##K##_##V,\
 __hashMapEnumerate##K##_##V,\
 __hashMapFree##K##_##V \
 End_Install()\
-pCHashMap##K##_##V NewHashMap##K##_##V(HashFunc##K##_##V hash) {\
+pCHashMap##K##_##V NewHashMap##K##_##V(HashFunc##K##_##V hash, Compare##K compare) {\
 	/****/Alloc_Instance(map, CHashMap##K##_##V)/****/\
 	map->buckets = (pCHashMapNode##K##_##V *)calloc(INI_BUCKETS, sizeof(pCHashMapNode##K##_##V));\
 	map->head = _NewCMapHead##K##_##V();\
@@ -335,12 +333,14 @@ pCHashMap##K##_##V NewHashMap##K##_##V(HashFunc##K##_##V hash) {\
 	map->length = INI_BUCKETS;\
 	map->size = 0;\
 	map->h = hash;\
-	map->equals = DFT_EQUAL(HashMap, K);\
-	map->freeKey = map->freeValue = NULL;\
+	map->compare = compare;\
+	map->freeKey = NULL;\
+	map->freeValue = NULL;\
 	return map;\
 }
 
 
-
+#define HashMapForEach(K, V, _map_, entry) \
+for(HashMapEntry(K, V) _head_ = m(_map_)->enumerate(), (entry) = _head_->next; (entry) != _head_; (entry) = (entry)->next)
 
 #endif

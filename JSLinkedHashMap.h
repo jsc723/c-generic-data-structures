@@ -114,7 +114,7 @@ void __hashMapPut##K##_##V(K k, V v);
 #define __DefHashMapPut(K, V)\
 void __hashMapPut##K##_##V(K k, V v) {\
 	/****/getSelf(CHashMap##K##_##V)/****/\
-	if (((double)self->size) / self->length > CAL_LOAD_FACTOR) {\
+	if (((double)self->size) / self->length > JS_CAL_LOAD_FACTOR) {\
 		__hashMapResize##K##_##V(self->length * 2);\
 	}\
 	int b = self->h(k) % self->length;\

@@ -12,7 +12,7 @@
 #include "sglib.h"
 #include "jscobj2.h"
 
-#define INI_CAP 8
+#define JS_ARR_INI_CAP 8
 
 //Define a pointer to an ArrayList<T> instance
 #define JSArrayList(T) pJS##T##Array
@@ -100,11 +100,11 @@ pJS##T##Array NewJS##T##Arr()\
 {\
 	/****/Alloc_Instance(list, JS##T##Array)/****/\
 	list->__vftb__ = &__vftb__JS##T##Array; \
-	list->arr = (T *)malloc(sizeof(T) * INI_CAP + 1);\
+	list->arr = (T *)malloc(sizeof(T) * JS_ARR_INI_CAP + 1);\
 	if(list->arr == NULL) return NULL;\
 	memset(list->arr, 0, sizeof(T));\
 	list->size = 0;\
-	list->_capacity = INI_CAP; \
+	list->_capacity = JS_ARR_INI_CAP; \
 	list->freeItem = NULL;\
 	return list;\
 }

@@ -3,9 +3,9 @@
 
 #include <string.h>
 #include <ctype.h>
-#include "CArrayList.h"
+#include "JSArrayList.h"
 //#include "CHashMap.h"
-#include "CPriorityQueue.h"
+#include "JSPriorityQueue.h"
 typedef char *string;
 
 typedef struct word {

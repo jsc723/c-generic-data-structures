@@ -2,12 +2,12 @@
 #define JS_PRIORITY_QUEUE_H
 
 #include "jscobj2.h"
-#include "CArrayList.h"
+#include "JSArrayList.h"
 
 #define USE_JSCOBJ
 
 #define JSPriorityQueue(E) pJSPriorityQueue##E
-#define NewJSPriorityQueue(E, cmp) NewCPQ_##E(cmp)
+#define NewJSPriorityQueue(E, cmp) NewJSCPQ_##E(cmp)
 
 #define Declare_JSPriorityQueue(E) \
 __JS_Dec_CPQ(E)\
@@ -187,7 +187,7 @@ void __JS_CPQ_free##E() {\
 }
 
 #define __JS_DecNewCPQ(E) \
-pJSPriorityQueue##E NewCPQ_##E(Compare##E cmp);
+pJSPriorityQueue##E NewJSCPQ_##E(Compare##E cmp);
 #define __JS_DefNewCPQ(E) \
 Install_Methods(JSPriorityQueue##E)\
 __JS_CPQ_add##E,\
@@ -199,7 +199,7 @@ __JS_CPQ_remove##E,\
 __JS_CPQ_size##E, \
 __JS_CPQ_free##E \
 End_Install()\
-pJSPriorityQueue##E NewCPQ_##E(Compare##E cmp) {\
+pJSPriorityQueue##E NewJSCPQ_##E(Compare##E cmp) {\
 	Alloc_Instance(pq, JSPriorityQueue##E);\
 	pq->heap = NewJSArrayList(E);\
 	pq->compare = cmp;\

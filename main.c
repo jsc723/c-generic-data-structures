@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "CHashMap.h"
-#include "CPriorityQueue.h"
-#include "CHashMap.h"
+#include "JSLinkedHashMap.h"
+#include "JSPriorityQueue.h"
+#include "JSLinkedHashMap.h"
 #include "userDefined.h"
-#include "CHashTable.h"
+#include "JSHashTable.h"
 
 unsigned int hashInt(int i) { return i; }
 

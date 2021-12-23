@@ -19,6 +19,7 @@
 
 //constructor
 #define NewJSArrayList(T) NewJS##T##Arr()
+#define NewJSArrayListFull(T, capacity, freeItem) NewJS##T##ArrFull((capacity), (freeItem))
 
 
 #define Declare_JSArrayList(T) \
@@ -65,7 +66,7 @@ unique
 //-------------------------------------------- 
 //define the ArrayList class
 #define __JS_DecArr(T) \
-__DefCompare(T)\
+JS__DefCompare(T)\
 typedef void (*F_Map##T)(T *t);\
 typedef void (*F_Reduce##T)(T *t1, T *t2);\
 Define_Class(JS##T##Array) \
@@ -80,10 +81,10 @@ With_Methods(JS##T##Array) \
 	void (*insert)(T item, int index);\
 	T (*popBack)();\
 	T (*popAt)(int index);\
-	int (*indexOf)(T item, Compare##T compare); \
+	int (*indexOf)(T item, JSCompare(T) compare); \
 	pJS##T##Array (*subList)(int start, int end); \
-	void (*sort)(Compare##T compare);\
-	void (*stableSort)(Compare##T compare);\
+	void (*sort)(JSCompare(T) compare);\
+	void (*stableSort)(JSCompare(T) compare);\
 	void (*map)(F_Map##T map_func);\
 	void (*reduce)(F_Reduce##T reduce_func, T *acc);\
 	void (*free)();\
@@ -93,19 +94,23 @@ End_Class(JS##T##Array)
 
 //define the constructor
 #define __JS_DecArrNewArrFuc(T) \
-pJS##T##Array NewJS##T##Arr();
+pJS##T##Array NewJS##T##Arr(); \
+pJS##T##Array NewJS##T##ArrFull(int capacity, void (*freeItem)(T item));
 
 #define __JS_DefArrNewArrFucAux(T) \
-pJS##T##Array NewJS##T##Arr()\
+pJS##T##Array NewJS##T##Arr() {\
+	return NewJS##T##ArrFull(JS_ARR_INI_CAP, NULL);\
+}\
+pJS##T##Array NewJS##T##ArrFull(int capacity, void (*freeItem)(T item))\
 {\
 	/****/Alloc_Instance(list, JS##T##Array)/****/\
 	list->__vftb__ = &__vftb__JS##T##Array; \
-	list->arr = (T *)malloc(sizeof(T) * JS_ARR_INI_CAP + 1);\
+	list->arr = (T *)malloc(sizeof(T) * capacity + 1);\
 	if(list->arr == NULL) return NULL;\
 	memset(list->arr, 0, sizeof(T));\
 	list->size = 0;\
-	list->_capacity = JS_ARR_INI_CAP; \
-	list->freeItem = NULL;\
+	list->_capacity = capacity; \
+	list->freeItem = freeItem;\
 	return list;\
 }
 
@@ -212,9 +217,9 @@ T __js_arr_pop##T##At(int index)\
 }
 
 #define __JS_DecArrIndexOf(T) \
-int __js_arr_indexOf##T(T item, Compare##T compare);
+int __js_arr_indexOf##T(T item, JSCompare(T) compare);
 #define __JS_DefArrIndexOf(T) \
-int __js_arr_indexOf##T(T item, Compare##T compare) {\
+int __js_arr_indexOf##T(T item, JSCompare(T) compare) {\
 	/****/getSelf(JS##T##Array)/****/\
 	int i; \
 	for (i = 0; i < self->size; i++) \
@@ -240,23 +245,22 @@ pJS##T##Array __js_arr_subList##T(int start, int end) {\
 }
 
 #define __JS_DecArrSort(T) \
-void __js_arr_quickSort##T(Compare##T compare);
+void __js_arr_quickSort##T(JSCompare(T) compare);
 
 #define __JS_DefArrSort(T) \
-void __js_arr_quickSort##T(Compare##T compare) {\
+void __js_arr_quickSort##T(JSCompare(T) compare) {\
 	/****/getSelf(JS##T##Array)/****/\
-	printf("qsort\n");\
 	SGLIB_ARRAY_SINGLE_QUICK_SORT(T, self->arr, self->size, compare);\
 }
 
 //merge sort arraylist
 #define __JS_DecArrStableSort(T) \
-void __js_arr_mergeHelper##T(const int l, const int mid, const int r, T *L, T *R, Compare##T compare);\
-void __js_arr_merge_sort##T(int l, int r, T *L, T *R, Compare##T compare);\
-void __js_arr_mergeSort##T(Compare##T compare);
+void __js_arr_mergeHelper##T(const int l, const int mid, const int r, T *L, T *R, JSCompare(T) compare);\
+void __js_arr_merge_sort##T(int l, int r, T *L, T *R, JSCompare(T) compare);\
+void __js_arr_mergeSort##T(JSCompare(T) compare);
 
 #define __JS_DefArrStableSort(T) \
-void __js_arr_mergeHelper##T(const int l, const int mid, const int r, T *L, T *R, Compare##T compare)\
+void __js_arr_mergeHelper##T(const int l, const int mid, const int r, T *L, T *R, JSCompare(T) compare)\
 {\
 	/****/getSelf(JS##T##Array)/****/\
 	T *arr = self->arr;\
@@ -284,7 +288,7 @@ void __js_arr_mergeHelper##T(const int l, const int mid, const int r, T *L, T *R
 	while (j < n2)\
 		arr[k++] = R[j++];\
 }\
-void __js_arr_merge_sort##T(int l, int r, T *L, T *R, Compare##T compare)\
+void __js_arr_merge_sort##T(int l, int r, T *L, T *R, JSCompare(T) compare)\
 {\
 	/****/getSelf(JS##T##Array)/****/\
 	if (l < r)\
@@ -296,7 +300,7 @@ void __js_arr_merge_sort##T(int l, int r, T *L, T *R, Compare##T compare)\
 		m(self); __js_arr_mergeHelper##T(l, mid, r, L, R, compare);\
 	}\
 }\
-void __js_arr_mergeSort##T(Compare##T compare) {\
+void __js_arr_mergeSort##T(JSCompare(T) compare) {\
 	/****/getSelf(JS##T##Array)/****/\
 	int n = (int)(self->size / 2) + 1;\
 	T *L = (T *)malloc(sizeof(T) * n);\

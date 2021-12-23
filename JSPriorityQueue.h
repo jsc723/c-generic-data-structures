@@ -41,10 +41,11 @@ __JS_DefNewCPQ(E)
 //------------------------------------------
 
 #define __JS_Dec_CPQ(E) \
+JS__DefCompare(E)\
 Declare_JSArrayList(E)\
 Define_Class(JSPriorityQueue##E)\
 	JSArrayList(E) heap;\
-	Compare##E compare;\
+	JSCompare(E) compare;\
 With_Methods(JSPriorityQueue##E)\
 	void (*add)(E e);\
 	void (*clear)();\
@@ -92,7 +93,7 @@ void __JS_CPQ__up##E(int i) {\
 #define __JS_DefDown(E) \
 void __JS_CPQ__down##E(int i) {\
 	getSelf(JSPriorityQueue##E);\
-	Compare##E cmp = self->compare;\
+	JSCompare(E) cmp = self->compare;\
 	E *arr = self->heap->arr;\
 	int left = __JS_CPQ__leftChild##E(i);\
 	int right = __JS_CPQ__rightChild##E(i);\
@@ -187,7 +188,7 @@ void __JS_CPQ_free##E() {\
 }
 
 #define __JS_DecNewCPQ(E) \
-pJSPriorityQueue##E NewJSCPQ_##E(Compare##E cmp);
+pJSPriorityQueue##E NewJSCPQ_##E(JSCompare(E) cmp);
 #define __JS_DefNewCPQ(E) \
 Install_Methods(JSPriorityQueue##E)\
 __JS_CPQ_add##E,\
@@ -199,7 +200,7 @@ __JS_CPQ_remove##E,\
 __JS_CPQ_size##E, \
 __JS_CPQ_free##E \
 End_Install()\
-pJSPriorityQueue##E NewJSCPQ_##E(Compare##E cmp) {\
+pJSPriorityQueue##E NewJSCPQ_##E(JSCompare(E) cmp) {\
 	Alloc_Instance(pq, JSPriorityQueue##E);\
 	pq->heap = NewJSArrayList(E);\
 	pq->compare = cmp;\

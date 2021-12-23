@@ -20,7 +20,7 @@
 #define JSHashTableEntry(K) pJSHashTableNode##K
 
 #define Declare_JSHashTable(K)\
-typedef int (*Compare##K)(const K t1, const K t2);\
+JS__DefCompare(K)\
 __JS_DecCHashTableNode(K)\
 __JS_DecCHashTable(K) \
 __JS_DecHashTablePut(K) \
@@ -71,7 +71,7 @@ Define_Class(JSHashTable##K)\
 	size_t length; /*num of buckets*/\
 	size_t size; /*num of items*/\
 	JSHashFunc##K h;\
-	Compare##K compare;\
+	JSCompare(K) compare;\
 	void (*freeKey)(K key);\
 With_Methods(JSHashTable##K)\
 	void (*put)(K k);\
@@ -94,7 +94,7 @@ void __JS_HashTablePut##K(K k) {\
 	}\
 	int b = self->h(k) % self->length;\
 	JSHashTableEntry(K) p = self->buckets[b];\
-	Compare##K cmp = self->compare;\
+	JSCompare(K) cmp = self->compare;\
 	while (p) {\
 		if (cmp(p->key, k) == 0) {\
 			return;\
@@ -139,7 +139,7 @@ int __JS_HashTableContainsKey##K(K k) {\
 	/****/getSelf(JSHashTable##K)/****/\
 		int b = self->h(k) % self->length;\
 	JSHashTableEntry(K) p = self->buckets[b];\
-	Compare##K cmp = self->compare;\
+	JSCompare(K) cmp = self->compare;\
 	while (p) {\
 		if (cmp(p->key, k) == 0) {\
 			self->_cachedItem = p;\
@@ -158,7 +158,7 @@ void __JS_HashTableRemove##K(K k) {\
 	/****/getSelf(JSHashTable##K)/****/\
 	int b = self->h(k) % self->length;\
 	JSHashTableEntry(K) p = self->buckets[b], q;\
-	Compare##K cmp = self->compare;\
+	JSCompare(K) cmp = self->compare;\
 	if (p && cmp(p->key, k) == 0) {\
 		self->buckets[b] = p->_nextInBucket;\
 	}\
@@ -212,8 +212,8 @@ void __JS_HashTableFree##K() {\
 	free(self);\
 }
 #define __JS_DecNewHashTable(K) \
-pJSHashTable##K NewJSHashTable##K(JSHashFunc##K hash, Compare##K compare);\
-pJSHashTable##K NewJSHashTableFull##K(JSHashFunc##K hash, Compare##K compare, void (*freeKey)(K key));
+pJSHashTable##K NewJSHashTable##K(JSHashFunc##K hash, JSCompare(K) compare);\
+pJSHashTable##K NewJSHashTableFull##K(JSHashFunc##K hash, JSCompare(K) compare, void (*freeKey)(K key));
 
 #define __JS_DefNewHashTable(K)\
 Install_Methods(JSHashTable##K) \
@@ -223,10 +223,10 @@ __JS_HashTableRemove##K,\
 __JS_HashTableClear##K,\
 __JS_HashTableFree##K \
 End_Install()\
-pJSHashTable##K NewJSHashTable##K(JSHashFunc##K hash, Compare##K compare) {\
+pJSHashTable##K NewJSHashTable##K(JSHashFunc##K hash, JSCompare(K) compare) {\
 	return NewJSHashTableFull##K(hash, compare, NULL);\
 }\
-pJSHashTable##K NewJSHashTableFull##K(JSHashFunc##K hash, Compare##K compare, void (*freeKey)(K key)) {\
+pJSHashTable##K NewJSHashTableFull##K(JSHashFunc##K hash, JSCompare(K) compare, void (*freeKey)(K key)) {\
 	/****/Alloc_Instance(map, JSHashTable##K)/****/\
 	map->buckets = (JSHashTableEntry(K) *)calloc(JS_INI_BUCKETS, sizeof(JSHashTableEntry(K)));\
 	map->_cachedItem = NULL;\

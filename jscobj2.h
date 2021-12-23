@@ -128,7 +128,9 @@ pInst->__vftb__ = &__vftb__##T;
 #define getSelf(T) T * self = (T *)_js_obj_arg_;
 //#define dec_Method(T) struct T * (* _method_)(struct T * ps)
 
-#define __DefCompare(T) typedef int (*Compare##T)(const T t1, const T t2);
+//--------------------utils---------------------------------------
+#define JSCompare(T) JSCompare_##T
+#define JS__DefCompare(T) typedef int (*JSCompare(T))(const T t1, const T t2);
 
 #define __DecDefaultEqual(ClassType, Y) \
 int DFT_EQ_##ClassType##_##Y(const Y *a, const Y *b);

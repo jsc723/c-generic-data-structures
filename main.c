@@ -28,9 +28,6 @@ string randomStr(int n) {
 	s[i] = '\0';
 	return s;
 }
-int str_eq(const string *p1, const string *p2) {
-	return strcmp(*p1, *p2) == 0;
-}
 
 Declare_JSPriorityQueue(double)
 Define_JSPriorityQueue(double)
@@ -79,7 +76,7 @@ int main() {
 	}
 	m(pq)->free();
 
-	JSHashMap(string, int) map = NewJSHashMapFull(string, int, hashString, (Comparestring) strcmp, (void (*)(char *))free, freeInt);
+	JSHashMap(string, int) map = NewJSHashMapFull(string, int, hashString, (JSCompare(string))strcmp, (void (*)(char *))free, freeInt);
 	for(int i = 0; i < 20; i++) {
 		string s = randomStr(10);
 		printf("insert %s %d\n", s, i);

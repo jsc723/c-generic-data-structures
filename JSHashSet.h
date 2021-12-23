@@ -16,7 +16,7 @@
 
 #define JSHashSet(K) pJSHashSet##K
 #define NewJSHashSet(K, hash, cmp) NewJSHashSet##K(hash, cmp)
-#define NewJSHashSetFull(K, hash, cmp, freeKey) NewJSHashSetFull##K(hash, cmp, freeKey);
+#define NewJSHashSetFull(K, hash, cmp, freeKey) NewJSHashSetFull##K(hash, cmp, freeKey)
 #define JSHashSetEntry(K) pJSHashSetNode##K
 
 #define Declare_JSHashSet(K)\

@@ -1441,6 +1441,8 @@ fixing rules from:
 http://www.cis.ohio-state.edu/~gurari/course/cis680/cis680Ch11.html
 
 */
+//#define DISABLE_DEFAULT_SG_RB_TREE
+#if !defined(DISABLE_DEFAULT_SG_RB_TREE)
 
 #define SGLIB___RBTREE_FIX_INSERTION_DISCREPANCY(type, tree, leftt, rightt, bits, RED, BLACK) {\
   type *t, *tl, *a, *b, *c, *ar, *bl, *br, *cl, *cr;\
@@ -1919,7 +1921,7 @@ void sglib___##type##_consistency_check(type *t) {\
 #define SGLIB_DEFINE_RBTREE_FUNCTIONS(type, left, right, colorbit, comparator) \
   SGLIB_DEFINE_RBTREE_FUNCTIONS_GENERAL(type, left, right, colorbit, comparator, 1, 0)
 
-
+#endif
 
 /* ---------------------------------------------------------------------------- */
 /* ---------------------------------------------------------------------------- */

@@ -16,8 +16,8 @@
 
 #define JSHashMap(K, V) pJSHashMap##K##V
 #define NewJSHashMap(K, V, hash, cmp) NewJSHashMap##K##V(hash, cmp)
-#define NewJSHashMapFull(K, V, hash, cmp, freeKey) NewJSHashMapFull##K##V(hash, cmp, freeKey);
-#define JSHashMapEntry(K, V) pJSHashMapNode##K
+#define NewJSHashMapFull(K, V, hash, cmp, freeKey, freeValue) NewJSHashMapFull##K##V(hash, cmp, freeKey, freeValue);
+#define JSHashMapEntry(K, V) pJSHashMapNode##K##V
 
 #define Declare_JSHashMap(K, V)\
 typedef int (*Compare##K)(const K t1, const K t2);\
@@ -45,18 +45,18 @@ __JS_DefNewHashMap(K, V)
 
 
 #define __JS_DecCHashMapNode(K, V) \
-typedef struct JSHashMapNode##K##V *pJSHashMapNode##K##V;\
+typedef struct JSHashMapNode##K##V *JSHashMapEntry(K, V);\
 typedef struct JSHashMapNode##K##V {\
 	K key;\
     V value;\
-	pJSHashMapNode##K##V _nextInBucket;\
+	JSHashMapEntry(K, V) _nextInBucket;\
 }JSHashMapNode##K##V;\
 struct JSHashMapNode##K##V;\
-pJSHashMapNode##K##V _NewJSHashMapNode##K##V(K k, V v);
+JSHashMapEntry(K, V) _NewJSHashMapNode##K##V(K k, V v);
 
 #define __JS_DefCHashMapNode(K, V)\
-pJSHashMapNode##K##V _NewJSHashMapNode##K##V(K k, V v) {\
-	pJSHashMapNode##K##V node = (pJSHashMapNode##K##V)malloc(sizeof(JSHashMapNode##K##V));\
+JSHashMapEntry(K, V) _NewJSHashMapNode##K##V(K k, V v) {\
+	JSHashMapEntry(K, V) node = (JSHashMapEntry(K, V))malloc(sizeof(JSHashMapNode##K##V));\
 	node->key = k;\
     node->value =  v;\
 	node->_nextInBucket = NULL;\
@@ -65,13 +65,13 @@ pJSHashMapNode##K##V _NewJSHashMapNode##K##V(K k, V v) {\
 
 #define JSHashMapForEach(K, V, _map_, entry) \
 for(int (_i_) = 0; (_i_) < (_map_)->length; (_i_)++) \
-for(pJSHashMapNode##K##V entry = (_map_)->buckets[(_i_)]; (entry); (entry) = (entry)->_nextInBucket)
+for(JSHashMapEntry(K, V) entry = (_map_)->buckets[(_i_)]; (entry); (entry) = (entry)->_nextInBucket)
 
 #define __JS_DecCHashMap(K, V)\
 typedef unsigned int(*JSHashFunc##K)(K k);\
 Define_Class(JSHashMap##K##V)\
-	pJSHashMapNode##K##V *buckets;\
-	pJSHashMapNode##K##V _cachedItem;\
+	JSHashMapEntry(K, V) *buckets;\
+	JSHashMapEntry(K, V) _cachedItem;\
 	size_t length; /*num of buckets*/\
 	size_t size; /*num of items*/\
 	JSHashFunc##K h;\
@@ -99,7 +99,7 @@ void __JS_HashMapPut##K##V(K k, V v) {\
 		__JS_HashMapResize##K##V(self->length * 2);\
 	}\
 	int b = self->h(k) % self->length;\
-	pJSHashMapNode##K##V p = self->buckets[b];\
+	JSHashMapEntry(K, V) p = self->buckets[b];\
 	Compare##K cmp = self->compare;\
 	while (p) {\
 		if (cmp(p->key, k) == 0) {\
@@ -110,7 +110,7 @@ void __JS_HashMapPut##K##V(K k, V v) {\
 		p = p->_nextInBucket;\
 	}\
 	/*add to the head of bucket*/\
-	pJSHashMapNode##K##V node = _NewJSHashMapNode##K##V(k, v);\
+	JSHashMapEntry(K, V) node = _NewJSHashMapNode##K##V(k, v);\
 	node->_nextInBucket = self->buckets[b];\
 	self->buckets[b] = node;\
 	/*update size*/\
@@ -124,8 +124,8 @@ void __JS_HashMapResize##K##V(int len);
 void __JS_HashMapResize##K##V(int len) {\
 	/****/getSelf(JSHashMap##K##V)/****/\
 	int b;\
-	pJSHashMapNode##K##V *newBuckets = (pJSHashMapNode##K##V *)calloc(len, sizeof(pJSHashMapNode##K##V *));\
-    pJSHashMapNode##K##V oldNext, p;\
+	JSHashMapEntry(K, V) *newBuckets = (JSHashMapEntry(K, V) *)calloc(len, sizeof(JSHashMapEntry(K, V) *));\
+    JSHashMapEntry(K, V) oldNext, p;\
 	for(int i = 0; i < self->length; i++) \
     for(p = self->buckets[i]; p; p = oldNext) {\
 		b = self->h(p->key) % len;\
@@ -146,7 +146,7 @@ V __JS_HashMapGet##K##V(K k);
 V __JS_HashMapGet##K##V(K k) {\
 	/****/getSelf(JSHashMap##K##V)/****/\
 	int b = self->h(k) % self->length;\
-	pJSHashMapNode##K##V p = self->buckets[b], q = self->_cachedItem;\
+	JSHashMapEntry(K, V) p = self->buckets[b], q = self->_cachedItem;\
 	Compare##K cmp = self->compare;\
 	if (q && cmp(q->key, k) == 0)\
 		return q->value;\
@@ -167,7 +167,7 @@ int __JS_HashMapContainsKey##K##V(K k);
 int __JS_HashMapContainsKey##K##V(K k) {\
 	/****/getSelf(JSHashMap##K##V)/****/\
 	int b = self->h(k) % self->length;\
-	pJSHashMapNode##K##V p = self->buckets[b];\
+	JSHashMapEntry(K, V) p = self->buckets[b];\
 	Compare##K cmp = self->compare;\
 	while (p) {\
 		if (cmp(p->key, k) == 0) {\
@@ -186,7 +186,7 @@ void __JS_HashMapRemove##K##V(K k);
 void __JS_HashMapRemove##K##V(K k) {\
 	/****/getSelf(JSHashMap##K##V)/****/\
 	int b = self->h(k) % self->length;\
-	pJSHashMapNode##K##V p = self->buckets[b], q;\
+	JSHashMapEntry(K, V) p = self->buckets[b], q;\
 	Compare##K cmp = self->compare;\
 	if (p && cmp(p->key, k) == 0) {\
 		self->buckets[b] = p->_nextInBucket;\
@@ -217,13 +217,16 @@ void __JS_HashMapClear##K##V();
 #define __JS_DefHashMapClear(K, V)\
 void __JS_HashMapClear##K##V() {\
 	/****/getSelf(JSHashMap##K##V)/****/\
-	pJSHashMapNode##K##V p = NULL, oldNext = NULL;\
+	JSHashMapEntry(K, V) p = NULL, oldNext = NULL;\
 	void(*freeKey)(K key) = self->freeKey;\
+    void(*freeValue)(V value) = self->freeValue;\
 	for(int i = 0; i < self->length; i++) \
     for(p = self->buckets[i]; p; p = oldNext) {\
 		oldNext = p->_nextInBucket;\
 		if (freeKey)\
 			freeKey(p->key);\
+        if (freeValue)\
+            freeValue(p->value);\
 		free(p);\
 	}\
 	self->size = 0;\
@@ -260,7 +263,7 @@ pJSHashMap##K##V NewJSHashMap##K##V(JSHashFunc##K hash, Compare##K compare) {\
 }\
 pJSHashMap##K##V NewJSHashMapFull##K##V(JSHashFunc##K hash, Compare##K compare, void (*freeKey)(K key), void (*freeValue)(V value)) {\
 	/****/Alloc_Instance(map, JSHashMap##K##V)/****/\
-	map->buckets = (pJSHashMapNode##K##V *)calloc(JS_INI_BUCKETS, sizeof(pJSHashMapNode##K##V));\
+	map->buckets = (JSHashMapEntry(K, V) *)calloc(JS_INI_BUCKETS, sizeof(JSHashMapEntry(K, V)));\
 	map->_cachedItem = NULL;\
 	map->length = JS_INI_BUCKETS;\
 	map->size = 0;\

@@ -58,6 +58,10 @@ int cmpword(const word w1, const word w2) {
 	return w1.count - w2.count;
 }
 
+void freeInt(int i) {
+	printf("free %d\n", i);
+}
+
 int main() {
 	JSPriorityQueue(word) pq = NewJSPriorityQueue(word, cmpword);
 	word w1 = { "hello", 5 };
@@ -75,7 +79,7 @@ int main() {
 	}
 	m(pq)->free();
 
-	JSHashMap(string, int) map = NewJSHashMap(string, int, hashString, (Comparestring) strcmp);
+	JSHashMap(string, int) map = NewJSHashMapFull(string, int, hashString, (Comparestring) strcmp, (void (*)(char *))free, freeInt);
 	for(int i = 0; i < 20; i++) {
 		string s = randomStr(10);
 		printf("insert %s %d\n", s, i);
@@ -89,8 +93,9 @@ int main() {
 	JSHashMapForEach(string, int, map, e) {
 		printf("%s %d\n", e->key, e->value);
 	}
+	m(map)->free();
 
-	JSHashTable(int) set = NewJSHashTable(int, hashInt, JS_DEFAULT_CMP(int));
+	JSHashTable(int) set = NewJSHashTableFull(int, hashInt, JS_DEFAULT_CMP(int), freeInt);
 	for(int i = 100; i < 120; i++) {
 		m(set)->put(i);
 	}
@@ -102,6 +107,6 @@ int main() {
 	JSHashTableForEach(int, set, p) {
 		printf("%d\n", p->key);
 	}
-
+	m(set)->free();
 	return 0;
 }

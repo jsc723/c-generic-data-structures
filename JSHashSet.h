@@ -59,9 +59,9 @@ JSHashSetEntry(K) _NewJSHashSetNode##K(K k) {\
 	return node;\
 }
 
-#define JSHashSetForEach(K, _map_, entry) \
-for(int (_i_) = 0; (_i_) < (_map_)->length; (_i_)++) \
-for(JSHashSetEntry(K) entry = (_map_)->buckets[(_i_)]; (entry); (entry) = (entry)->_nextInBucket)
+#define JSHashSetForEach(K, _set_, entry) \
+for(int (_i_) = 0; (_i_) < (_set_)->length; (_i_)++) \
+for(JSHashSetEntry(K) entry = (_set_)->buckets[(_i_)]; (entry); (entry) = (entry)->_nextInBucket)
 
 #define __JS_DecCHashSet(K)\
 typedef unsigned int(*JSHashFunc##K)(K k);\

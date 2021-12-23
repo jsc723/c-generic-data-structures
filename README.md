@@ -6,8 +6,8 @@ And the APIs are provided in a objective orienting style.
 Since all of these structures use my OOP framework written in ```jscobj2.h```, the APIs are also OOP like.
 Let ```pInst``` be a pointer to an instance of data structure defined in this repo (e.g. an ArrayList) , 
 You can access its members as usual using ```->```, (e.g. ```pInst->size```).
-But when you want to call a method, you should use the ```m()``` macro. 
-For example, ```m(pInst)->pushBack(10)``` 
+But when you want to call a method, you should use the ```methodof()``` macro. 
+For example, ```methodof(pInst)->pushBack(10)``` 
 append 10 at the end of the arraylist (assume pInst points to an arraylist instance).
 ## JSArrayList
 header file: ```JSArrayList.h```
@@ -114,14 +114,14 @@ pStudent newStudent(const char *name, int age) {
 int main() {
   ArrayList(pStudent) list = NewArrayListFull(pStudent, 16, );
   list->freeItem = freePStudent;
-  m(list)->pushBack(newStudent("Bob", 20));
-  m(list)->pushBack(newStudent("Alice", 19));
-  m(list)->insert(newStudent("Eve", 21), 1);
-  m(list)->sort();
+  methodof(list)->pushBack(newStudent("Bob", 20));
+  methodof(list)->pushBack(newStudent("Alice", 19));
+  methodof(list)->insert(newStudent("Eve", 21), 1);
+  methodof(list)->sort();
   for(int i = 0; i < list->size; i++) {
     printf("%s %d\n",list->arr[i].name, list->arr[i].age);
   }
-  m(list)->free();
+  methodof(list)->free();
   return 0;
 }
 
@@ -172,6 +172,18 @@ void free();
 ```c
 size_t size; // number of items
 ```
+##### How to iterate
+```c
+JSHashSetForEach(K, _set_, entry)
+```
+This macro defines a variable `JSHashSetEntry(K) entry`, and iterates the hashset in a for-each loop.
+See the next section for an example.
+You can assume `JSHashSetEntry(K)` contains at least the following members.
+```c
+struct JSHashMapEntry(K, V) {
+	K key;
+};
+```
 ## JSHashMap
 header file: 
 ```
@@ -219,6 +231,19 @@ void free();
 ```c
 size_t size; // number of items
 ```
+##### How to iterate
+```c
+JSHashMapForEach(K, V, _map_, entry)
+```
+This macro defines a variable `JSHashMapEntry(K, V) entry`, and iterates the hashmap in a for-each loop.
+See the next section for an example.
+You can assume `JSHashMapEntry(K, V)` contains at least the following members.
+```c
+struct JSHashMapEntry(K, V) {
+	K key;
+	V value;
+};
+```
 #### Examples
 ```c
 /*In a header file*/
@@ -250,15 +275,15 @@ unsigned int hashString(string str) {
 
 int main() {
 	JSHashMap(string, int) hashmap = NewJSHashMapFull(string, int, hashString, (JSCompare(string)) strcmp, (void (*)(char *))free, NULL);
-	m(hashmap)->put(String("abc"), 10);
-	m(hashmap)->put(String("qfdv"), 12);
-	m(hashmap)->put(String("hello"), -22);
-	m(hashmap)->put(String("hashmap"), 0);
-	printf("%d\n", m(hashmap)->get("hello"));
+	methodof(hashmap)->put(String("abc"), 10);
+	methodof(hashmap)->put(String("qfdv"), 12);
+	methodof(hashmap)->put(String("hello"), -22);
+	methodof(hashmap)->put(String("hashmap"), 0);
+	printf("%d\n", methodof(hashmap)->get("hello"));
 	JSHashMapForEach(string, int, hashmap, e) {
 		printf("%s %d\n", e->key, e->value);
 	}
-	m(map)->free();
+	methodof(map)->free();
 	return 0;
 }
 ```
@@ -335,15 +360,15 @@ int main() {
 	word w2 = { "world", 10 };
 	word w3 = { "c++", 8 };
 	word w4 = { "java", 1 };
-	m(pq)->add(w1);
-	m(pq)->add(w2);
-	m(pq)->add(w3);
-	m(pq)->add(w4);
-	while (m(pq)->size()) {
-		word t = m(pq)->poll();
+	methodof(pq)->add(w1);
+	methodof(pq)->add(w2);
+	methodof(pq)->add(w3);
+	methodof(pq)->add(w4);
+	while (methodof(pq)->size()) {
+		word t = methodof(pq)->poll();
 		printf("%s %d\n", t.v, t.count);
 	}
-	m(pq)->free();
+	methodof(pq)->free();
 	return 0;
 }
   
@@ -405,6 +430,13 @@ struct JS_RBTree_Node_##K##_##C {
 };
 ```
 You can traverse the tree as you like. You can only modify the data (which is invisible to the comparator) in the key, don't modify anything else!
+
+##### How to iterate
+```c
+JSTreeSetForEach(K, C, _set_, entry)
+```
+This macro defines a variable `JSTreeSetEntry(K, C) entry`, and does an inorder traversal in a for-each loop.
+See the next section for an example.
 
 #### Examples
 ```c

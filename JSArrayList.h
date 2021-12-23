@@ -141,7 +141,7 @@ void __js_arr_pushBack##T(T thing);
 void __js_arr_pushBack##T(T thing)\
 {\
 	/****/getSelf(JS##T##Array)/****/\
-	m(self)->insert(thing, self->size);\
+	methodof(self)->insert(thing, self->size);\
 }
 
 #define __JS_DecArrPushAll(T) \
@@ -239,7 +239,7 @@ pJS##T##Array __js_arr_subList##T(int start, int end) {\
 	int i;\
 	if(end == -1) end = self->size;\
 	for (i = start; i < end && i < self->size; i++) {\
-		m(sub)->pushBack(self->arr[i]);\
+		methodof(sub)->pushBack(self->arr[i]);\
 	}\
 	return sub;\
 }
@@ -297,7 +297,7 @@ void __js_arr_merge_sort##T(int l, int r, T *L, T *R, JSCompare(T) compare)\
 		int mid = l + (r - l) / 2;\
 		this; __js_arr_merge_sort##T(l, mid, L, R, compare);\
 		this; __js_arr_merge_sort##T(mid + 1, r, L, R, compare); \
-		m(self); __js_arr_mergeHelper##T(l, mid, r, L, R, compare);\
+		methodof(self); __js_arr_mergeHelper##T(l, mid, r, L, R, compare);\
 	}\
 }\
 void __js_arr_mergeSort##T(JSCompare(T) compare) {\

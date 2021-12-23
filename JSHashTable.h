@@ -207,7 +207,7 @@ void __JS_HashTableFree##K();
 #define __JS_DefHashTableFree(K)\
 void __JS_HashTableFree##K() {\
 	/****/getSelf(JSHashTable##K)/****/\
-	m(self)->clear();\
+	methodof(self)->clear();\
 	free(self->buckets);\
 	free(self);\
 }

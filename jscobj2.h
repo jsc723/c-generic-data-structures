@@ -76,11 +76,10 @@ is included in the macro Define_Class().
 */
 #include <stdio.h>
 
-#define this m(self)
-#define m(pInst) (pInst)->_method_(pInst)->__vftb__
+#define this methodof(self)
+#define methodof(pInst) ((_js_obj_arg_ = (pInst)), ((pInst)->__vftb__))
 
 extern __thread void *_js_obj_arg_;
-void *__js_method__(void *obj);
 
 #define VFTB(T) _VFTB_##T
 #define pVFTB(T) _VFTB_##T *
@@ -90,8 +89,7 @@ void *__js_method__(void *obj);
 typedef struct _VFTB_##T _VFTB_##T; \
 typedef struct T *p##T;\
 typedef struct T {\
-	_VFTB_##T *__vftb__; \
-	p##T (* _method_)(p##T ps);
+	_VFTB_##T *__vftb__;
 
 #define With_Methods(T) \
 }T; \
@@ -99,12 +97,10 @@ struct _VFTB_##T {
 
 #define End_Class(T) \
 }; \
-T * T##_Method(T *ps); \
 extern _VFTB_##T __vftb__##T;\
 
 //--------------------second group----------------------------------------
 #define Install_Methods(T) \
-T * T##_Method(T *ps) { return (T *)__js_method__(ps); } \
 _VFTB_##T __vftb__##T = {
 
 #define End_Install() };
@@ -112,7 +108,6 @@ _VFTB_##T __vftb__##T = {
 //-------------------third group---------------------------------------
 #define Alloc_Instance(pInst,T) \
 p##T pInst = (p##T)malloc(sizeof(T));\
-pInst->_method_ = T##_Method; \
 pInst->__vftb__ = &__vftb__##T; 
 
 //-------------------fourth group--------------------------------------

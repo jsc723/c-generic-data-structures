@@ -241,7 +241,7 @@ void __JS_HashMapFree##K##V();
 #define __JS_DefHashMapFree(K, V)\
 void __JS_HashMapFree##K##V() {\
 	/****/getSelf(JSHashMap##K##V)/****/\
-	m(self)->clear();\
+	methodof(self)->clear();\
 	free(self->buckets);\
 	free(self);\
 }

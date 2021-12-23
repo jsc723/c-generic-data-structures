@@ -86,7 +86,7 @@ void __JS_CPQ__up##E(int i) {\
 	if (i == 0) return;\
 	if (self->compare(arr[p], arr[i]) < 0) {\
 		__JS_CPQ__swap(E, arr, p, i);\
-		m(self); __JS_CPQ__up##E(p);\
+		methodof(self); __JS_CPQ__up##E(p);\
 	}\
 }
 
@@ -107,7 +107,7 @@ void __JS_CPQ__down##E(int i) {\
 		int max = cmp(arr[left], arr[right]) >= 0 ? left : right;\
 		if (cmp(arr[max], arr[i]) > 0) {\
 			__JS_CPQ__swap(E, arr, max, i);\
-			m(self); __JS_CPQ__down##E(max);\
+			methodof(self); __JS_CPQ__down##E(max);\
 		}\
 	}\
 }
@@ -116,8 +116,8 @@ void __JS_CPQ_add##E(E e);
 #define __JS_DefCPQ_add(E) \
 void __JS_CPQ_add##E(E e) {\
 	getSelf(JSPriorityQueue##E);\
-	m(self->heap)->pushBack(e);\
-	m(self); __JS_CPQ__up##E(self->heap->size - 1);\
+	methodof(self->heap)->pushBack(e);\
+	methodof(self); __JS_CPQ__up##E(self->heap->size - 1);\
 }
 
 #define __JS_DecCPQ_clear(E)\
@@ -125,7 +125,7 @@ void __JS_CPQ_clear##E();
 #define __JS_DefCPQ_clear(E)\
 void __JS_CPQ_clear##E() {\
 	getSelf(JSPriorityQueue##E);\
-	m(self->heap)->free();\
+	methodof(self->heap)->free();\
 	self->heap = NewJSArrayList(E);\
 }
 #define __JS_DecCPQ_contains(E)\
@@ -133,7 +133,7 @@ int __JS_CPQ_contains##E(E e);
 #define __JS_DefCPQ_contains(E)\
 int __JS_CPQ_contains##E(E e) {\
 	getSelf(JSPriorityQueue##E);\
-	return m(self->heap)->indexOf(e, self->compare) >= 0;\
+	return methodof(self->heap)->indexOf(e, self->compare) >= 0;\
 }
 
 #define __JS_DecCPQ_peek(E)\
@@ -149,10 +149,10 @@ E __JS_CPQ_poll##E();
 #define __JS_DefCPQ_poll(E)\
 E __JS_CPQ_poll##E() {\
 	getSelf(JSPriorityQueue##E);\
-	E result = m(self)->peek();\
+	E result = methodof(self)->peek();\
 	__JS_CPQ__swap(E, self->heap->arr, 0, self->heap->size - 1);\
-	m(self->heap)->popBack();\
-	m(self); __JS_CPQ__down##E(0);\
+	methodof(self->heap)->popBack();\
+	methodof(self); __JS_CPQ__down##E(0);\
 	return result;\
 }
 
@@ -162,10 +162,10 @@ int __JS_CPQ_remove##E(E e);
 int __JS_CPQ_remove##E(E e) {\
 	getSelf(JSPriorityQueue##E);\
 	int i, removed = 0;\
-	if ((i = m(self->heap)->indexOf(e, self->compare)) >= 0) {\
+	if ((i = methodof(self->heap)->indexOf(e, self->compare)) >= 0) {\
 		__JS_CPQ__swap(E, self->heap->arr, i, self->heap->size - 1);\
-		m(self->heap)->popBack();\
-		m(self); __JS_CPQ__down##E(i);\
+		methodof(self->heap)->popBack();\
+		methodof(self); __JS_CPQ__down##E(i);\
 		removed++;\
 	}\
 	return removed;\
@@ -183,7 +183,7 @@ void __JS_CPQ_free##E();
 #define __JS_DefCPQ_free(E)\
 void __JS_CPQ_free##E() {\
 	getSelf(JSPriorityQueue##E);\
-	m(self->heap)->free();\
+	methodof(self->heap)->free();\
 	free(self);\
 }
 

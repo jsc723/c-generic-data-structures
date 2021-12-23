@@ -65,45 +65,45 @@ int main() {
 	word w2 = { "I", 10 };
 	word w3 = { "say", 8 };
 	word w4 = { "world", 1 };
-	m(pq)->add(w1);
-	m(pq)->add(w2);
-	m(pq)->add(w3);
-	m(pq)->add(w4);
+	methodof(pq)->add(w1);
+	methodof(pq)->add(w2);
+	methodof(pq)->add(w3);
+	methodof(pq)->add(w4);
 	word t;
-	while (m(pq)->size()) {
-		t = m(pq)->poll();
+	while (methodof(pq)->size()) {
+		t = methodof(pq)->poll();
 		printf("%s %d\n", t.v, t.count);
 	}
-	m(pq)->free();
+	methodof(pq)->free();
 
 	JSHashMap(string, int) map = NewJSHashMapFull(string, int, hashString, (JSCompare(string))strcmp, (void (*)(char *))free, freeInt);
 	for(int i = 0; i < 20; i++) {
 		string s = randomStr(10);
 		printf("insert %s %d\n", s, i);
-		m(map)->put(s, i);
+		methodof(map)->put(s, i);
 	}
-	m(map)->remove("phqghumeay");
-	// HashMapEntry(string, int) head = m(map)->enumerate(), p;
+	methodof(map)->remove("phqghumeay");
+	// HashMapEntry(string, int) head = methodof(map)->enumerate(), p;
 	// for(p = head->next; p != head; p = p->next) {
 	// 	printf("%s %d\n", p->key, p->value);
 	// }
 	JSHashMapForEach(string, int, map, e) {
 		printf("%s %d\n", e->key, e->value);
 	}
-	m(map)->free();
+	methodof(map)->free();
 
 	JSHashTable(int) set = NewJSHashTableFull(int, hashInt, JS_DEFAULT_CMP(int), freeInt);
 	for(int i = 100; i < 120; i++) {
-		m(set)->put(i);
+		methodof(set)->put(i);
 	}
-	m(set)->put(10);
-	m(set)->put(14);
-	m(set)->put(120);
-	m(set)->put(1248);
-	m(set)->remove(100);
+	methodof(set)->put(10);
+	methodof(set)->put(14);
+	methodof(set)->put(120);
+	methodof(set)->put(1248);
+	methodof(set)->remove(100);
 	JSHashTableForEach(int, set, p) {
 		printf("%d\n", p->key);
 	}
-	m(set)->free();
+	methodof(set)->free();
 	return 0;
 }

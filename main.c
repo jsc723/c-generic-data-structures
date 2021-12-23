@@ -44,8 +44,8 @@ Define_CHashMap(int, string)
 Declare_CHashMap(string, int)
 Define_CHashMap(string, int)
 
-Declare_CHashTable(int)
-Define_CHashTable(int)
+Declare_JSHashTable(int)
+Define_JSHashTable(int)
 
 string String(const char *s) {
 	int sz = strlen(s);
@@ -59,7 +59,7 @@ int cmpword(const word w1, const word w2) {
 }
 
 int main() {
-	PriorityQueue(word) pq = NewPriorityQueue(word, cmpword);
+	JSPriorityQueue(word) pq = NewJSPriorityQueue(word, cmpword);
 	word w1 = { "hello", 5 };
 	word w2 = { "I", 10 };
 	word w3 = { "say", 8 };
@@ -90,7 +90,7 @@ int main() {
 		printf("%s %d\n", e->key, e->value);
 	}
 
-	HashTable(int) set = NewHashTable(int, hashInt, JS_DEFAULT_CMP(int));
+	JSHashTable(int) set = NewJSHashTable(int, hashInt, JS_DEFAULT_CMP(int));
 	for(int i = 100; i < 120; i++) {
 		m(set)->put(i);
 	}
@@ -99,7 +99,7 @@ int main() {
 	m(set)->put(120);
 	m(set)->put(1248);
 	m(set)->remove(100);
-	HashTableForEach(int, set, p) {
+	JSHashTableForEach(int, set, p) {
 		printf("%d\n", p->key);
 	}
 

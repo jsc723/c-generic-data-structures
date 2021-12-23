@@ -1,5 +1,5 @@
-#ifndef CHASHTABLE_H
-#define CHASHTABLE_H
+#ifndef JS_HASHTABLE_H
+#define JS_HASHTABLE_H
 /*
 	Version 1.0
 	By Sicheng Jiang
@@ -16,85 +16,85 @@
 #define CAL_LOAD_FACTOR 2.0
 #define INI_BUCKETS 8
 
-#define HashTable(K) pCHashTable##K
-#define NewHashTable(K, hash, cmp) NewHashTable##K(hash, cmp)
-#define HashTableEntry(K) pCHashTableNode##K
+#define JSHashTable(K) pJSHashTable##K
+#define NewJSHashTable(K, hash, cmp) NewJSHashTable##K(hash, cmp)
+#define JSHashTableEntry(K) pJSHashTableNode##K
 
-#define Declare_CHashTable(K)\
-__DefCompare(K)\
-__DecCHashTableNode(K)\
-__DecCHashTable(K) \
-__DecHashTablePut(K) \
-__DecHashTableResize(K) \
-__DecHashTableContainsKey(K) \
-__DecHashTableRemove(K) \
-__DecHashTableClear(K) \
-__DecHashTableFree(K) \
-__DecNewHashTable(K)
+#define Declare_JSHashTable(K)\
+typedef int (*Compare##K)(const K t1, const K t2);\
+__JS_DecCHashTableNode(K)\
+__JS_DecCHashTable(K) \
+__JS_DecHashTablePut(K) \
+__JS_DecHashTableResize(K) \
+__JS_DecHashTableContainsKey(K) \
+__JS_DecHashTableRemove(K) \
+__JS_DecHashTableClear(K) \
+__JS_DecHashTableFree(K) \
+__JS_DecNewHashTable(K)
 
-#define Define_CHashTable(K)\
- __DefCHashTableNode(K)\
- __DefHashTablePut(K) \
-__DefHashTableResize(K) \
- __DefHashTableContainsKey(K) \
-__DefHashTableRemove(K) \
-__DefHashTableClear(K) \
- __DefHashTableFree(K) \
-__DefNewHashTable(K)
+#define Define_JSHashTable(K)\
+__JS_DefCHashTableNode(K)\
+__JS_DefHashTablePut(K) \
+__JS_DefHashTableResize(K) \
+__JS_DefHashTableContainsKey(K) \
+__JS_DefHashTableRemove(K) \
+__JS_DefHashTableClear(K) \
+__JS_DefHashTableFree(K) \
+__JS_DefNewHashTable(K)
 
 
-#define __DecCHashTableNode(K) \
-typedef struct CHashTableNode##K *pCHashTableNode##K;\
-typedef struct CHashTableNode##K {\
+#define __JS_DecCHashTableNode(K) \
+typedef struct JSHashTableNode##K *pJSHashTableNode##K;\
+typedef struct JSHashTableNode##K {\
 	K key;\
-	pCHashTableNode##K _nextInBucket;\
-}CHashTableNode##K;\
-struct CHashTableNode##K;\
-pCHashTableNode##K _NewCHashTableNode##K(K k);
+	pJSHashTableNode##K _nextInBucket;\
+}JSHashTableNode##K;\
+struct JSHashTableNode##K;\
+pJSHashTableNode##K _NewJSHashTableNode##K(K k);
 
-#define __DefCHashTableNode(K)\
-pCHashTableNode##K _NewCHashTableNode##K(K k) {\
-	pCHashTableNode##K node = (pCHashTableNode##K)malloc(sizeof(CHashTableNode##K));\
+#define __JS_DefCHashTableNode(K)\
+pJSHashTableNode##K _NewJSHashTableNode##K(K k) {\
+	pJSHashTableNode##K node = (pJSHashTableNode##K)malloc(sizeof(JSHashTableNode##K));\
 	node->key = k;\
 	node->_nextInBucket = NULL;\
 	return node;\
 }
 
-#define HashTableForEach(K, _map_, entry) \
+#define JSHashTableForEach(K, _map_, entry) \
 for(int (_i_) = 0; (_i_) < (_map_)->length; (_i_)++) \
-for(pCHashTableNode##K entry = (_map_)->buckets[(_i_)]; (entry); (entry) = (entry)->_nextInBucket)
+for(pJSHashTableNode##K entry = (_map_)->buckets[(_i_)]; (entry); (entry) = (entry)->_nextInBucket)
 
-#define __DecCHashTable(K)\
+#define __JS_DecCHashTable(K)\
 typedef unsigned int(*HashFunc##K)(K k);\
-Define_Class(CHashTable##K)\
-	pCHashTableNode##K *buckets;\
-	pCHashTableNode##K _cachedItem;\
+Define_Class(JSHashTable##K)\
+	pJSHashTableNode##K *buckets;\
+	pJSHashTableNode##K _cachedItem;\
 	size_t length; /*num of buckets*/\
 	size_t size; /*num of items*/\
 	HashFunc##K h;\
 	Compare##K compare;\
 	void (*freeKey)(K key);\
-With_Methods(CHashTable##K)\
+With_Methods(JSHashTable##K)\
 	void (*put)(K k);\
 	int  (*containsKey)(K k);\
 	void    (*remove)(K k);\
 	void (*clear)();\
 	void(*free)();\
-End_Class(CHashTable##K)
+End_Class(JSHashTable##K)
 
 
 
-#define __DecHashTablePut(K)\
+#define __JS_DecHashTablePut(K)\
 void __HashTablePut##K(K k);
 
-#define __DefHashTablePut(K)\
+#define __JS_DefHashTablePut(K)\
 void __HashTablePut##K(K k) {\
-	/****/getSelf(CHashTable##K)/****/\
+	/****/getSelf(JSHashTable##K)/****/\
 	if (((double)self->size) / self->length > CAL_LOAD_FACTOR) {\
 		__HashTableResize##K(self->length * 2);\
 	}\
 	int b = self->h(k) % self->length;\
-	pCHashTableNode##K p = self->buckets[b];\
+	pJSHashTableNode##K p = self->buckets[b];\
 	Compare##K cmp = self->compare;\
 	while (p) {\
 		if (cmp(p->key, k) == 0) {\
@@ -104,22 +104,22 @@ void __HashTablePut##K(K k) {\
 		p = p->_nextInBucket;\
 	}\
 	/*add to the head of bucket*/\
-	pCHashTableNode##K node = _NewCHashTableNode##K(k);\
+	pJSHashTableNode##K node = _NewJSHashTableNode##K(k);\
 	node->_nextInBucket = self->buckets[b];\
 	self->buckets[b] = node;\
 	/*update size*/\
 	self->size++;\
 }
 
-#define __DecHashTableResize(K) \
+#define __JS_DecHashTableResize(K) \
 void __HashTableResize##K(int len);
 
-#define __DefHashTableResize(K)\
+#define __JS_DefHashTableResize(K)\
 void __HashTableResize##K(int len) {\
-	/****/getSelf(CHashTable##K)/****/\
+	/****/getSelf(JSHashTable##K)/****/\
 	int b;\
-	pCHashTableNode##K *newBuckets = (pCHashTableNode##K *)calloc(len, sizeof(pCHashTableNode##K *));\
-    pCHashTableNode##K oldNext, p;\
+	pJSHashTableNode##K *newBuckets = (pJSHashTableNode##K *)calloc(len, sizeof(pJSHashTableNode##K *));\
+    pJSHashTableNode##K oldNext, p;\
 	for(int i = 0; i < self->length; i++) \
     for(p = self->buckets[i]; p; p = oldNext) {\
 		b = self->h(p->key) % len;\
@@ -133,14 +133,14 @@ void __HashTableResize##K(int len) {\
 	self->length = len;\
 }
 
-#define __DecHashTableContainsKey(K)\
+#define __JS_DecHashTableContainsKey(K)\
 int __HashTableContainsKey##K(K k);
 
-#define __DefHashTableContainsKey(K)\
+#define __JS_DefHashTableContainsKey(K)\
 int __HashTableContainsKey##K(K k) {\
-	/****/getSelf(CHashTable##K)/****/\
+	/****/getSelf(JSHashTable##K)/****/\
 		int b = self->h(k) % self->length;\
-	pCHashTableNode##K p = self->buckets[b];\
+	pJSHashTableNode##K p = self->buckets[b];\
 	Compare##K cmp = self->compare;\
 	while (p) {\
 		if (cmp(p->key, k) == 0) {\
@@ -152,14 +152,14 @@ int __HashTableContainsKey##K(K k) {\
 	return 0;\
 }
 
-#define __DecHashTableRemove(K)\
+#define __JS_DecHashTableRemove(K)\
 void __HashTableRemove##K(K k);
 
-#define __DefHashTableRemove(K)\
+#define __JS_DefHashTableRemove(K)\
 void __HashTableRemove##K(K k) {\
-	/****/getSelf(CHashTable##K)/****/\
+	/****/getSelf(JSHashTable##K)/****/\
 	int b = self->h(k) % self->length;\
-	pCHashTableNode##K p = self->buckets[b], q;\
+	pJSHashTableNode##K p = self->buckets[b], q;\
 	Compare##K cmp = self->compare;\
 	if (p && cmp(p->key, k) == 0) {\
 		self->buckets[b] = p->_nextInBucket;\
@@ -182,13 +182,13 @@ void __HashTableRemove##K(K k) {\
 }
 
 //clean all items, does not reset hash function and equals function
-#define __DecHashTableClear(K)\
+#define __JS_DecHashTableClear(K)\
 void __HashTableClear##K();
 
-#define __DefHashTableClear(K)\
+#define __JS_DefHashTableClear(K)\
 void __HashTableClear##K() {\
-	/****/getSelf(CHashTable##K)/****/\
-	pCHashTableNode##K p = NULL, oldNext = NULL;\
+	/****/getSelf(JSHashTable##K)/****/\
+	pJSHashTableNode##K p = NULL, oldNext = NULL;\
 	void(*freeKey)(K key) = self->freeKey;\
 	for(int i = 0; i < self->length; i++) \
     for(p = self->buckets[i]; p; p = oldNext) {\
@@ -203,30 +203,30 @@ void __HashTableClear##K() {\
 }
 
 
-#define __DecHashTableFree(K)\
+#define __JS_DecHashTableFree(K)\
 void __HashTableFree##K();
 
-#define __DefHashTableFree(K)\
+#define __JS_DefHashTableFree(K)\
 void __HashTableFree##K() {\
-	/****/getSelf(CHashTable##K)/****/\
+	/****/getSelf(JSHashTable##K)/****/\
 	m(self)->clear();\
 	free(self->buckets);\
 	free(self);\
 }
-#define __DecNewHashTable(K) \
-pCHashTable##K NewHashTable##K(HashFunc##K hash, Compare##K compare);
+#define __JS_DecNewHashTable(K) \
+pJSHashTable##K NewHashTable##K(HashFunc##K hash, Compare##K compare);
 
-#define __DefNewHashTable(K)\
-Install_Methods(CHashTable##K) \
+#define __JS_DefNewHashTable(K)\
+Install_Methods(JSHashTable##K) \
 __HashTablePut##K,\
 __HashTableContainsKey##K,\
 __HashTableRemove##K,\
 __HashTableClear##K,\
 __HashTableFree##K \
 End_Install()\
-pCHashTable##K NewHashTable##K(HashFunc##K hash, Compare##K compare) {\
-	/****/Alloc_Instance(map, CHashTable##K)/****/\
-	map->buckets = (pCHashTableNode##K *)calloc(INI_BUCKETS, sizeof(pCHashTableNode##K));\
+pJSHashTable##K NewJSHashTable##K(HashFunc##K hash, Compare##K compare) {\
+	/****/Alloc_Instance(map, JSHashTable##K)/****/\
+	map->buckets = (pJSHashTableNode##K *)calloc(INI_BUCKETS, sizeof(pJSHashTableNode##K));\
 	map->_cachedItem = NULL;\
 	map->length = INI_BUCKETS;\
 	map->size = 0;\

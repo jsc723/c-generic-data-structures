@@ -1,13 +1,13 @@
-#ifndef C_PRIORITY_QUEUE_H
-#define C_PRIORITY_QUEUE_H
+#ifndef JS_PRIORITY_QUEUE_H
+#define JS_PRIORITY_QUEUE_H
 
 #include "jscobj2.h"
 #include "CArrayList.h"
 
 #define USE_JSCOBJ
 
-#define PriorityQueue(E) pJSPriorityQueue##E
-#define NewPriorityQueue(E, cmp) NewCPQ_##E(cmp)
+#define JSPriorityQueue(E) pJSPriorityQueue##E
+#define NewJSPriorityQueue(E, cmp) NewCPQ_##E(cmp)
 
 #define Declare_JSPriorityQueue(E) \
 __JS_Dec_CPQ(E)\

@@ -276,9 +276,7 @@ Define_JSPriorityQueue(T) //define class JSPriorityQueue<T>
 PriorityQueue(T) //type name of a pointer to an PriorityQueue<T> instance
   
 /* 
-   prototype of the constructor of ArrayList<T>
    Note that the comparator should returns a positive number when t1 has a higher priority then t2. 
-   (And 0 when equal, negative when less) 
 */
 PriorityQueue(T) NewPriorityQueue(T, JSCompare(T)); 
 
@@ -349,4 +347,107 @@ int main() {
 	return 0;
 }
   
+```
+
+## JSTreeSet
+header file: ```JSTreeSet.h```
+#### APIs
+Different from the privious classes, JSTreeSet is bound to a key type and a particular comparator when it is defined, therefore it is not possible to specify the comparator when initialiate the instances.
+If you need to use different comparators for a type, just define a new JSTreeSet with a different comparator.
+The comparator of JSTreeSet can be eithor a function or a macro.
+##### Declare and Define
+```c
+Declare_JSTreeSet(K, C) //declare class JSTreeSet<K, C> (an TreeSet whose items have type T and bound to comparator C)
+
+Define_JSTreeSet(K, C) //define class JSTreeSet<K, C>
+```
+##### Type Name
+```c
+TreeSet(K, C)
+```
+##### Constructor
+```c
+JSTreeSet(K, C) NewJSTreeSet(K, C); 
+
+```
+##### Methods
+peek/poll assumes the tree is not empty.
+put does nothing when the key exists
+remove does nothing when the key doesn't exist.
+```c
+K    peekMin();
+K    pollMin();
+K    peekMax();
+K    pollMax();
+void put(K k);
+int  containsKey(K k);
+void remove(K k);
+void clear();
+void free();
+```
+
+##### Public Members
+
+```c
+
+JSTreeSetEntry(K, C) tree; //root of the tree, can be NULL.
+
+int size;
+
+```
+A `JSTreeSetEntry(K, C)` is a pointer of the following structure
+```c
+struct JS_RBTree_Node_##K##_##C {
+    K key;
+    char color;
+    JSTreeSetEntry(K, C) left;
+    JSTreeSetEntry(K, C) right;
+};
+```
+You can traverse the tree as you like. You can only modify the data (which is invisible to the comparator) in the key, don't modify anything else!
+
+#### Examples
+```c
+/*In a source file*/
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "JSTreeSet.h"
+#define CMP_INT(a, b) (a - b)
+Declare_JSTreeSet(int, CMP_INT)
+Define_JSTreeSet(int, CMP_INT)
+
+void inorder(JSTreeSetEntry(int, CMP_INT) node) {
+    if(node) {
+        inorder(node->left);
+        printf("%d\n", node->key);
+        inorder(node->right);
+    }
+}
+
+int main() {
+    JSTreeSet(int, CMP_INT) set = NewJSTreeSet(int, CMP_INT);
+    methodof(set)->put(199);
+    methodof(set)->put(23);
+    methodof(set)->put(1);
+    methodof(set)->put(344);
+    methodof(set)->put(5556);
+    methodof(set)->put(-90);
+    printf("size = %d\n", set->size);
+    printf("test member 344: %d\n", methodof(set)->containsKey(344));
+    printf("test member 346: %d\n", methodof(set)->containsKey(346));
+    methodof(set)->remove(344);
+    inorder(set->tree);
+    printf("test member 344: %d\n", methodof(set)->containsKey(344));
+    JSTreeSetForEach(int, CMP_INT, set, entry) {
+        printf("%d\n", entry->key);
+    }
+    while(set->size) {
+        int n = methodof(set)->pollMax();
+        printf(":%d\n", n);
+    }
+    methodof(set)->free();
+    printf("done\n");
+    return 0;
+}
 ```

@@ -4,7 +4,7 @@
 #include <ctype.h>
 #include "JSHashMap.h"
 #include "JSPriorityQueue.h"
-//#include "JSLinkedHashMap.h"
+#include "JSTreeSet.h"
 #include "userDefined.h"
 #include "JSHashSet.h"
 
@@ -35,14 +35,18 @@ Define_JSPriorityQueue(double)
 Declare_JSPriorityQueue(word)
 Define_JSPriorityQueue(word)
 
-// Declare_JSHashMap(int, string)
-// Define_JSHashMap(int, string)
+//Declare_JSHashMap(int, string)
+//Define_JSHashMap(int, string)
 
 Declare_JSHashMap(string, int)
 Define_JSHashMap(string, int)
 
 Declare_JSHashSet(int)
 Define_JSHashSet(int)
+
+
+Declare_JSTreeSet(int, JS_DFT_CMP_int)
+Define_JSTreeSet(int, JS_DFT_CMP_int)
 
 string String(const char *s) {
 	int sz = strlen(s);
@@ -57,6 +61,13 @@ int cmpword(const word w1, const word w2) {
 
 void freeInt(int i) {
 	printf("free %d\n", i);
+}
+void inorder(JSTreeSetEntry(int, JS_DFT_CMP_int) node) {
+    if(node) {
+        inorder(node->left);
+        printf("%d\n", node->key);
+        inorder(node->right);
+    }
 }
 
 int main() {
@@ -105,5 +116,28 @@ int main() {
 		printf("%d\n", p->key);
 	}
 	methodof(set)->free();
+
+	JSTreeSet(int, JS_DFT_CMP_int) treeset = NewJSTreeSet(int, JS_DFT_CMP_int);
+    methodof(treeset)->put(199);
+    methodof(treeset)->put(23);
+    methodof(treeset)->put(1);
+    methodof(treeset)->put(344);
+    methodof(treeset)->put(5556);
+    methodof(treeset)->put(-90);
+    printf("size = %d\n", treeset->size);
+    printf("test member 344: %d\n", methodof(treeset)->containsKey(344));
+    printf("test member 346: %d\n", methodof(treeset)->containsKey(346));
+    methodof(treeset)->remove(344);
+    inorder(treeset->tree);
+    printf("test member 344: %d\n", methodof(treeset)->containsKey(344));
+    JSTreeSetForEach(int, JS_DFT_CMP_int, treeset, entry) {
+        printf("%d\n", entry->key);
+    }
+    while(treeset->size) {
+        int n = methodof(treeset)->pollMax();
+        printf(":%d\n", n);
+    }
+    methodof(treeset)->free();
+    printf("done\n");
 	return 0;
 }

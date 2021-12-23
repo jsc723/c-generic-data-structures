@@ -152,13 +152,13 @@ int DFT_EQ_##ClassType##_##Y(const Y *a, const Y *b) {\
 //int DFT_CMP(const void *a, const void *b);
 
 #define __JS_DecDefaultCmpN(Y) \
-int JS_DFT_CMP_N_##Y(const Y a, const Y b);
+int JS_DFT_CMP_##Y(const Y a, const Y b);
 
 #define __JS_DefDefaultCmpN(Y) \
-int JS_DFT_CMP_N_##Y(const Y a, const Y b) { return a - b;}
+int JS_DFT_CMP_##Y(const Y a, const Y b) { return a - b;}
 
 #define __JS_DefDefaultCmpNF(Y) \
-int JS_DFT_CMP_N_##Y(const Y a, const Y b) { double t = a - b;\
+int JS_DFT_CMP_##Y(const Y a, const Y b) { double t = a - b;\
 	if (t == 0) return 0;\
 	if (t > 0) return 1;\
 	return -1;\
@@ -172,6 +172,6 @@ __JS_DecDefaultCmpN(size_t)
 __JS_DecDefaultCmpN(float)
 __JS_DecDefaultCmpN(double)
 
-#define JS_DEFAULT_CMP(Y) JS_DFT_CMP_N_##Y
+#define JS_DEFAULT_CMP(Y) JS_DFT_CMP_##Y
 
 #endif

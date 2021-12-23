@@ -18,6 +18,7 @@
 
 #define JSHashTable(K) pJSHashTable##K
 #define NewJSHashTable(K, hash, cmp) NewJSHashTable##K(hash, cmp)
+#define NewJSHashTableFull(K, hash, cmp, freeKey) NewJSHashTableFull##K(hash, cmp, freeKey);
 #define JSHashTableEntry(K) pJSHashTableNode##K
 
 #define Declare_JSHashTable(K)\
@@ -98,7 +99,6 @@ void __JS_HashTablePut##K(K k) {\
 	Compare##K cmp = self->compare;\
 	while (p) {\
 		if (cmp(p->key, k) == 0) {\
-			if(self->freeKey) self->freeKey(k);\
 			return;\
 		}\
 		p = p->_nextInBucket;\
@@ -214,7 +214,8 @@ void __JS_HashTableFree##K() {\
 	free(self);\
 }
 #define __JS_DecNewHashTable(K) \
-pJSHashTable##K NewJSHashTable##K(JSHashFunc##K hash, Compare##K compare);
+pJSHashTable##K NewJSHashTable##K(JSHashFunc##K hash, Compare##K compare);\
+pJSHashTable##K NewJSHashTableFull##K(JSHashFunc##K hash, Compare##K compare, void (*freeKey)(K key));
 
 #define __JS_DefNewHashTable(K)\
 Install_Methods(JSHashTable##K) \
@@ -225,6 +226,9 @@ __JS_HashTableClear##K,\
 __JS_HashTableFree##K \
 End_Install()\
 pJSHashTable##K NewJSHashTable##K(JSHashFunc##K hash, Compare##K compare) {\
+	return NewJSHashTableFull##K(hash, compare, NULL);\
+}\
+pJSHashTable##K NewJSHashTableFull##K(JSHashFunc##K hash, Compare##K compare, void (*freeKey)(K key)) {\
 	/****/Alloc_Instance(map, JSHashTable##K)/****/\
 	map->buckets = (pJSHashTableNode##K *)calloc(JS_INI_BUCKETS, sizeof(pJSHashTableNode##K));\
 	map->_cachedItem = NULL;\
@@ -232,7 +236,7 @@ pJSHashTable##K NewJSHashTable##K(JSHashFunc##K hash, Compare##K compare) {\
 	map->size = 0;\
 	map->h = hash;\
 	map->compare = compare;\
-	map->freeKey = NULL;\
+	map->freeKey = freeKey;\
 	return map;\
 }
 

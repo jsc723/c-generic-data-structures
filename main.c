@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "JSLinkedHashMap.h"
+#include "JSHashMap.h"
 #include "JSPriorityQueue.h"
-#include "JSLinkedHashMap.h"
+//#include "JSLinkedHashMap.h"
 #include "userDefined.h"
 #include "JSHashTable.h"
 
@@ -38,11 +38,11 @@ Define_JSPriorityQueue(double)
 Declare_JSPriorityQueue(word)
 Define_JSPriorityQueue(word)
 
-Declare_CHashMap(int, string)
-Define_CHashMap(int, string)
+// Declare_JSHashMap(int, string)
+// Define_JSHashMap(int, string)
 
-Declare_CHashMap(string, int)
-Define_CHashMap(string, int)
+Declare_JSHashMap(string, int)
+Define_JSHashMap(string, int)
 
 Declare_JSHashTable(int)
 Define_JSHashTable(int)
@@ -75,7 +75,7 @@ int main() {
 	}
 	m(pq)->free();
 
-	HashMap(string, int) map = NewHashMap(string, int, hashString, (Comparestring) strcmp);
+	JSHashMap(string, int) map = NewJSHashMap(string, int, hashString, (Comparestring) strcmp);
 	for(int i = 0; i < 20; i++) {
 		string s = randomStr(10);
 		printf("insert %s %d\n", s, i);
@@ -86,7 +86,7 @@ int main() {
 	// for(p = head->next; p != head; p = p->next) {
 	// 	printf("%s %d\n", p->key, p->value);
 	// }
-	HashMapForEach(string, int, map, e) {
+	JSHashMapForEach(string, int, map, e) {
 		printf("%s %d\n", e->key, e->value);
 	}
 

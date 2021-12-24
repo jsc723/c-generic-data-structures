@@ -1,4 +1,4 @@
-# c-generic-data-structures
+# JSCLIB: c-generic-data-structures
 A header-only library provides some common data structures with generic types implemented in **C** (compiles under `-std=c99` and above).
 And the APIs are provided in a objective orienting style.
 

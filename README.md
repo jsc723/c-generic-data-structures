@@ -136,8 +136,7 @@ pStudent newStudent(const char *name, int age) {
 }
 
 int main() {
-  ArrayList(pStudent) list = NewArrayListFull(pStudent, 16, );
-  list->freeItem = freePStudent;
+  ArrayList(pStudent) list = NewArrayListFull(pStudent, 16, comparePStudent, freePStudent);
   methodof(list)->pushBack(newStudent("Bob", 20));
   methodof(list)->pushBack(newStudent("Alice", 19));
   methodof(list)->insert(newStudent("Eve", 21), 1);

@@ -25,7 +25,7 @@ append 10 at the end of the arraylist (assume pInst points to an arraylist insta
 
 ## List of Available Data Structures
 ```c
-JSArrayList(T)       //Auto-sizing array
+JSArrayList(T)       //Auto-resizing array
 JSList(T)            //Doubly linked list
 JSHashSet(K)         //Hashset
 JSHashMap(K, V)      //Hashmap

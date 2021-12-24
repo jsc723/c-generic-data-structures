@@ -4,11 +4,11 @@
 #include <ctype.h>
 
 #define USE_JSCOBJ
-#include "JSHashMap.h"
-#include "JSPriorityQueue.h"
-#include "JSTreeSet.h"
+#include "../JSHashMap.h"
+#include "../JSPriorityQueue.h"
+#include "../JSTreeSet.h"
 #include "userDefined.h"
-#include "JSHashSet.h"
+#include "../JSHashSet.h"
 
 unsigned int hashInt(int i) { return i; }
 

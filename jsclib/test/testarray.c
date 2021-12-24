@@ -4,7 +4,7 @@
 #include <ctype.h>
 
 #define USE_JSCOBJ
-#include "JSArrayList.h"
+#include "../JSArrayList.h"
 
 Declare_JSArrayList(int)
 Define_JSArrayList(int)

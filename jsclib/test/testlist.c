@@ -4,7 +4,7 @@
 
 #define USE_JSCOBJ
 
-#include "JSList.h"
+#include "../JSList.h"
 
 Declare_JSList(int)
 Define_JSList(int)

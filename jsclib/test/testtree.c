@@ -5,7 +5,7 @@
 
 #define USE_JSCOBJ
 
-#include "JSTreeSet.h"
+#include "../JSTreeSet.h"
 #define CMP_INT(a, b) (a - b)
 #define CMP_INT_GT(a, b) (b - a)
 

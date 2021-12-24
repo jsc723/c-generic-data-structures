@@ -3,9 +3,8 @@
 
 #include <string.h>
 #include <ctype.h>
-#include "JSArrayList.h"
-//#include "CHashMap.h"
-#include "JSPriorityQueue.h"
+#include "../JSArrayList.h"
+#include "../JSPriorityQueue.h"
 typedef char *string;
 
 typedef struct word {

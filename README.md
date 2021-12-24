@@ -483,7 +483,7 @@ int contains(T elem);
 */
 T peek();
 
-/* Same as peek(), except this method will remove the item that has the higher priority from the queue. */
+/* Same as peek(), except this method will remove the item that has the highest priority from the queue. */
 T poll();
 
 //remove one instance of elem from the queue. Return 1 if successfully removed one item, 0 if the item is not found.

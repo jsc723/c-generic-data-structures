@@ -2,9 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+
+#define USE_JSCOBJ
+
 #include "JSTreeSet.h"
 #define CMP_INT(a, b) (a - b)
 #define CMP_INT_GT(a, b) (b - a)
+
 Declare_JSTreeSet(int, CMP_INT)
 Define_JSTreeSet(int, CMP_INT)
 Declare_JSTreeSet(int, CMP_INT_GT)

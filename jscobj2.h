@@ -173,7 +173,7 @@ int JS_DFT_CMP_PTR_##Y(const Y *a, const Y *b);
 int JS_DFT_CMP_PTR_##Y(const Y *a, const Y *b) { return *a - *b;}
 
 #define __JS_DefDefaultCmpNFP(Y) \
-int JS_DFT_CMP_PTR_##Y(const Y a, const Y b) { double t = *a - *b;\
+int JS_DFT_CMP_PTR_##Y(const Y *a, const Y *b) { double t = *a - *b;\
 	if (t == 0) return 0;\
 	if (t > 0) return 1;\
 	return -1;\
@@ -186,7 +186,32 @@ __JS_DecDefaultCmpN(long)
 __JS_DecDefaultCmpN(size_t)
 __JS_DecDefaultCmpN(float)
 __JS_DecDefaultCmpN(double)
+__JS_DecDefaultCmpNP(int)
+__JS_DecDefaultCmpNP(short)
+__JS_DecDefaultCmpNP(char)
+__JS_DecDefaultCmpNP(long)
+__JS_DecDefaultCmpNP(size_t)
+__JS_DecDefaultCmpNP(float)
+__JS_DecDefaultCmpNP(double)
 
 #define JS_DEFAULT_CMP(Y) JS_DFT_CMP_##Y
+
+#ifdef USE_JSCOBJ
+    __thread void *_js_obj_arg_;
+	__JS_DefDefaultCmpN(int)
+	__JS_DefDefaultCmpN(short)
+	__JS_DefDefaultCmpN(char)
+	__JS_DefDefaultCmpN(long)
+	__JS_DefDefaultCmpN(size_t)
+	__JS_DefDefaultCmpNF(float)
+	__JS_DefDefaultCmpNF(double)
+    __JS_DefDefaultCmpNP(int)
+	__JS_DefDefaultCmpNP(short)
+	__JS_DefDefaultCmpNP(char)
+	__JS_DefDefaultCmpNP(long)
+	__JS_DefDefaultCmpNP(size_t)
+	__JS_DefDefaultCmpNFP(float)
+	__JS_DefDefaultCmpNFP(double)
+#endif
 
 #endif

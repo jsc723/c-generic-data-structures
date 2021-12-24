@@ -9,6 +9,16 @@ You can access its members as usual using ```->```, (e.g. ```pInst->size```).
 But when you want to call a method, you should use the ```methodof()``` macro. 
 For example, ```methodof(pInst)->pushBack(10)``` 
 append 10 at the end of the arraylist (assume pInst points to an arraylist instance).
+
+## List of Available Data Structures
+```c
+JSArrayList(T)       //Auto-sizing array
+JSList(T)            //Doubly linked list
+JSHashSet(K)         //Hashset
+JSHashMap(K, V)      //Hashmap
+JSPriorityQueue(T)   //Priority Queue
+JSTreeSet(K, C)      //Red-Black tree (K: key type, C: comparator)
+```
 ## JSArrayList
 an auto-resizing array list
 header file: ```JSArrayList.h```
@@ -155,46 +165,46 @@ NewJSListEntry(T, value); //value should has type T
 ##### Methods
 ```c
 //return a pointer to the first node
-JSListEntry(T)    (*front)();
+JSListEntry(T)    front();
 
 //return a pointer to the last node
-JSListEntry(T)    (*back)();
+JSListEntry(T)    back();
 
 //push a node to the front of the list, elem must not be a member of list
-void (*pushFront)(JSListEntry(T) elem);
+void pushFront(JSListEntry(T) elem);
 
 //push a node to the back of the list, elem must not be a member of list
-void (*pushBack)(JSListEntry(T) elem);
+void pushBack(JSListEntry(T) elem);
 
 //pop the first node of the list
-JSListEntry(T) (*popFront)();
+JSListEntry(T) popFront();
 
 //pop the last node of the list
-JSListEntry(T) (*popBack)();
+JSListEntry(T) popBack();
 
 //remove the given node elem from the list. elem must be a member of list
-void (*remove)(JSListEntry(T) elem);
+void remove(JSListEntry(T) elem);
 
 //insert elem after the node pointed by where, elem must not be a member of list
-void (*insertAfter)(JSListEntry(T) where, JSListEntry(T) elem);
+void insertAfter(JSListEntry(T) where, JSListEntry(T) elem);
 
 //insert elem before the node pointed by where, elem must not be a member of list
-void (*insertBefore)(JSListEntry(T) where, JSListEntry(T) elem);
+void insertBefore(JSListEntry(T) where, JSListEntry(T) elem);
 
 //find a node with given value in the list, returns NULLs if not exist
-JSListEntry(T) (*find)(T value, JSCompare(T) compare);
+JSListEntry(T) find(T value, JSCompare(T) compare);
 
 //reverse the list
-void (*reverse)();
+void reverse();
 
 //sort the list
-void (*sort)(JSCompare(T) compare);
+void sort(JSCompare(T) compare);
 
 //remove all node in the list (it won't free any node however)
-void (*clear)();
+void clear();
 
 //invoke clear, then free the list itself
-void (*free)();
+void free();
   
 ```
 

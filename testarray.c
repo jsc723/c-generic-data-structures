@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+
+#define USE_JSCOBJ
 #include "JSArrayList.h"
 
 Declare_JSArrayList(int)

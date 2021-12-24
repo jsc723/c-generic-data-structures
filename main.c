@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+
+#define USE_JSCOBJ
 #include "JSHashMap.h"
 #include "JSPriorityQueue.h"
 #include "JSTreeSet.h"

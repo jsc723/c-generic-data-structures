@@ -1,6 +1,19 @@
 # c-generic-data-structures
-some common data structures implemented in **C** (compiles under `-std=c99` and above), supporting generic types.
+A header-only library provides some common data structures with generic types implemented in **C** (compiles under `-std=c99` and above).
 And the APIs are provided in a objective orienting style.
+
+## Getting start
+1. Download the source. Copy the folder `jsclib` into your project
+2. Put the following line **at the top of exactly one of your `.c` file** (before including any headers of the jsclib)
+```c
+#define USE_JSCOBJ
+```
+3. Include the headers for the data structures that you want to use
+For example
+```c
+#include "jsclib/JSArrayList.h"
+```
+And now you should be able to use it!
 
 ## About the OOP framework
 Since all of these structures use my OOP framework written in ```jscobj2.h```, the APIs are also OOP like.

@@ -115,7 +115,6 @@ int __JS_TreeSetContainsKey##K##_##C(K k) {\
     /****/getSelf(JSTreeSet##K##_##C)/****/\
     JS_RBTree_Node_##K##_##C e;\
     e.key = k;\
-    printf("contains key %d\n", e.key);\
     return !!sglib_JS_RBTree_Node_##K##_##C##_find_member(self->tree, &e);\
 }\
 void __JS_TreeSetRemove##K##_##C(K k) {\

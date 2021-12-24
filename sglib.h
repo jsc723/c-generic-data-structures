@@ -449,6 +449,46 @@
   (list) = _r_;\
 }
 
+#define SGLIB_LIST_SORT_VALUE(type, list, comparator, next, value) {\
+  /* a non-recursive merge sort on lists */\
+  type *_r_;\
+  type *_a_, *_b_, *_todo_, *_t_, **_restail_;\
+  int _i_, _n_, _contFlag_;\
+  _r_ = (list);\
+  _contFlag_ = 1;\
+  for(_n_ = 1; _contFlag_; _n_ = _n_+_n_) {\
+    _todo_ = _r_; _r_ = NULL; _restail_ = &_r_; _contFlag_ =0;\
+    while (_todo_!=NULL) {\
+      _a_ = _todo_;\
+      for(_i_ = 1, _t_ = _a_;  _i_ < _n_ && _t_!=NULL;  _i_++, _t_ = _t_->next) ;\
+      if (_t_ ==NULL) {\
+        *_restail_ = _a_;\
+        break;\
+      }\
+      _b_ = _t_->next; _t_->next=NULL;\
+      for(_i_ =1, _t_ = _b_;  _i_<_n_ && _t_!=NULL;  _i_++, _t_ = _t_->next) ;\
+      if (_t_ ==NULL) {\
+        _todo_ =NULL;\
+      } else {\
+        _todo_ = _t_->next; _t_->next=NULL;\
+      }\
+      /* merge */\
+      while (_a_!=NULL && _b_!=NULL) {\
+        if (comparator(_a_->value, _b_->value) < 0) {\
+          *_restail_ = _a_;  _restail_ = &(_a_->next); _a_ = _a_->next;\
+        } else {\
+          *_restail_ = _b_;  _restail_ = &(_b_->next); _b_ = _b_->next;\
+        }\
+      }\
+      if (_a_!=NULL) *_restail_ = _a_;\
+      else *_restail_ = _b_;\
+      while (*_restail_!=NULL) _restail_ = &((*_restail_)->next);\
+      _contFlag_ =1;\
+    }\
+  }\
+  (list) = _r_;\
+}
+
 /* --------------------------------- sorted list (level 0) --------------------- */
 /*
   All operations suppose that the list is sorted and they preserve
@@ -653,6 +693,17 @@
   if (_dll_ != NULL) {\
     for(; _dll_->previous!=NULL; _dll_=_dll_->previous) ;\
     SGLIB_LIST_SORT(type, _dll_, comparator, next);\
+    SGLIB___DL_LIST_CREATE_FROM_LIST(type, _dll_, previous, next);\
+    (list) = _dll_;\
+  }\
+}
+
+#define SGLIB_DL_LIST_SORT_VALUE(type, list, comparator, previous, next, value) {\
+  type *_dll_, *_dlp_, *_dlt_;\
+  _dll_ = (list);\
+  if (_dll_ != NULL) {\
+    for(; _dll_->previous!=NULL; _dll_=_dll_->previous) ;\
+    SGLIB_LIST_SORT_VALUE(type, _dll_, comparator, next, value);\
     SGLIB___DL_LIST_CREATE_FROM_LIST(type, _dll_, previous, next);\
     (list) = _dll_;\
   }\

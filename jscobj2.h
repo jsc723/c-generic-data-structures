@@ -126,6 +126,8 @@ pInst->__vftb__ = &__vftb__##T;
 //--------------------utils---------------------------------------
 #define JSCompare(T) JSCompare_##T
 #define JS__DefCompare(T) typedef int (*JSCompare(T))(const T t1, const T t2);
+#define JSCompareP(T) JSCompareP_##T
+#define JS__DefCompareP(T) typedef int (*JSCompareP(T))(const T *t1, const T *t2);
 
 #define __DecDefaultEqual(ClassType, Y) \
 int DFT_EQ_##ClassType##_##Y(const Y *a, const Y *b);
@@ -159,6 +161,19 @@ int JS_DFT_CMP_##Y(const Y a, const Y b) { return a - b;}
 
 #define __JS_DefDefaultCmpNF(Y) \
 int JS_DFT_CMP_##Y(const Y a, const Y b) { double t = a - b;\
+	if (t == 0) return 0;\
+	if (t > 0) return 1;\
+	return -1;\
+}
+
+#define __JS_DecDefaultCmpNP(Y) \
+int JS_DFT_CMP_PTR_##Y(const Y *a, const Y *b);
+
+#define __JS_DefDefaultCmpNP(Y) \
+int JS_DFT_CMP_PTR_##Y(const Y *a, const Y *b) { return *a - *b;}
+
+#define __JS_DefDefaultCmpNFP(Y) \
+int JS_DFT_CMP_PTR_##Y(const Y a, const Y b) { double t = *a - *b;\
 	if (t == 0) return 0;\
 	if (t > 0) return 1;\
 	return -1;\

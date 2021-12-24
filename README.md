@@ -10,6 +10,7 @@ But when you want to call a method, you should use the ```methodof()``` macro.
 For example, ```methodof(pInst)->pushBack(10)``` 
 append 10 at the end of the arraylist (assume pInst points to an arraylist instance).
 ## JSArrayList
+an auto-resizing array list
 header file: ```JSArrayList.h```
 #### APIs
 ##### Declare and Define
@@ -127,6 +128,144 @@ int main() {
 
   
 ```
+
+
+## JSList
+header file: ```JSList.h```
+A doubly linked list
+#### APIs
+##### Declare and Define
+```c
+Declare_JSList(T) //declare class JSList<T> (an JSList whose items have type T)
+
+Define_JSList(T) //define class JSList<T>
+```
+##### Type Name
+```c
+JSList(T) //type name of a *pointer* to an JSList<T> instance
+
+JSListEntry(T) //a pointer to a list node
+```
+##### Constructors
+```c
+NewJSList(T); //element type as the only parameter
+
+NewJSListEntry(T, value); //value should has type T
+```
+##### Methods
+```c
+//return a pointer to the first node
+JSListEntry(T)    (*front)();
+
+//return a pointer to the last node
+JSListEntry(T)    (*back)();
+
+//push a node to the front of the list, elem must not be a member of list
+void (*pushFront)(JSListEntry(T) elem);
+
+//push a node to the back of the list, elem must not be a member of list
+void (*pushBack)(JSListEntry(T) elem);
+
+//pop the first node of the list
+JSListEntry(T) (*popFront)();
+
+//pop the last node of the list
+JSListEntry(T) (*popBack)();
+
+//remove the given node elem from the list. elem must be a member of list
+void (*remove)(JSListEntry(T) elem);
+
+//insert elem after the node pointed by where, elem must not be a member of list
+void (*insertAfter)(JSListEntry(T) where, JSListEntry(T) elem);
+
+//insert elem before the node pointed by where, elem must not be a member of list
+void (*insertBefore)(JSListEntry(T) where, JSListEntry(T) elem);
+
+//find a node with given value in the list, returns NULLs if not exist
+JSListEntry(T) (*find)(T value, JSCompare(T) compare);
+
+//reverse the list
+void (*reverse)();
+
+//sort the list
+void (*sort)(JSCompare(T) compare);
+
+//remove all node in the list (it won't free any node however)
+void (*clear)();
+
+//invoke clear, then free the list itself
+void (*free)();
+  
+```
+
+##### Public Members
+```c
+struct JS_List_Node_##T {
+    T value;                //ok to read and write
+    pJS_List_Node_##T prev; //readonly
+    pJS_List_Node_##T next; //readonly
+};
+
+struct JSList##T {
+	size_t size; //number of items, readonly
+};
+
+```
+#### Examples
+```c
+Declare_JSList(int)
+Define_JSList(int)
+Declare_JSList(double)
+Define_JSList(double)
+
+void printList(JSList(int) list) {
+    printf("list [%d]: ", list->size);
+    JSListForEach(int, list, entry) {
+        printf("%d <-> ", entry->value);
+    }
+    printf("\n");
+}
+int main() {
+    JSList(int) lst = NewJSList(int);
+    methodof(lst)->reverse();
+    JSListEntry(int) arr[10];
+    for(int i = 0; i < 10; i++) {
+        arr[i] = NewJSListEntry(int, i);
+        methodof(lst)->pushBack(arr[i]);
+    }
+    printList(lst);
+    methodof(lst)->popBack();
+    methodof(lst)->popFront();
+    printList(lst);
+    methodof(lst)->remove(arr[5]);
+    methodof(lst)->remove(arr[3]);
+    printList(lst);
+    methodof(lst)->insertAfter(arr[2], arr[5]);
+    methodof(lst)->insertBefore(arr[6], arr[3]);
+    printList(lst);
+    while(lst->size) {
+        printf("pop %d \n", methodof(lst)->popFront()->value);
+    }
+    for(int i = 0; i < 5; i++) {
+        methodof(lst)->pushFront(arr[i]);
+    }
+    for(int i = 5; i < 10; i++) {
+        methodof(lst)->pushBack(arr[i]);
+    }
+    printList(lst);
+    methodof(lst)->sort(JS_DEFAULT_CMP(int));
+    printList(lst);
+    methodof(lst)->reverse();
+    printList(lst);
+    printf("find 5: %d\n", methodof(lst)->find(5, JS_DEFAULT_CMP(int))->value);
+    methodof(lst)->clear();
+    printList(lst);
+    methodof(lst)->free();
+    return 0;
+}
+
+```
+
 
 ## JSHashSet
 header file: 

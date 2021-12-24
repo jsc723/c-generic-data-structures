@@ -37,6 +37,7 @@ an auto-resizing array list
 header file: ```JSArrayList.h```
 #### APIs
 ##### Declare and Define
+You should `Declare` the class before you use it. And you should `Define` the class in exactly one of your translation units (`.c` files).
 ```c
 Declare_JSArrayList(T) //declare class JSArrayList<T> (an JSArrayList whose items have type T)
 
